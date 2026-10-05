@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fuel - TMS</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="../index.html" class="brand">TMS</a>
+            <ul>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="vehicles.html">Vehicles</a></li>
+                <li><a href="drivers.html">Drivers</a></li>
+                <li><a href="trips.html">Trips</a></li>
+                <li><a href="bookings.html">Bookings</a></li>
+                <li><a href="fuel.html">Fuel</a></li>
+                <li><a href="billing.html">Billing</a></li>
+                <li><a href="notifications.html">Notifications</a></li>
+                <li><a href="reports.html">Reports</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="page-header">
+            <h1>Fuel Records</h1>
+            <button class="btn" id="add-fuel-btn">Add Record</button>
+        </div>
+
+        <section class="panel">
+            <table id="fuel-table">
+                <thead>
+                    <tr>
+                        <th>Vehicle</th>
+                        <th>Litres</th>
+                        <th>Cost</th>
+                        <th>Station</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="6">Loading...</td></tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/fuel.js"></script>
+</body>
+</html>

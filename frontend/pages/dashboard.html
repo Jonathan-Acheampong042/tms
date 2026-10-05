@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - TMS</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="../index.html" class="brand">TMS</a>
+            <ul>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="vehicles.html">Vehicles</a></li>
+                <li><a href="drivers.html">Drivers</a></li>
+                <li><a href="trips.html">Trips</a></li>
+                <li><a href="bookings.html">Bookings</a></li>
+                <li><a href="fuel.html">Fuel</a></li>
+                <li><a href="billing.html">Billing</a></li>
+                <li><a href="notifications.html">Notifications</a></li>
+                <li><a href="reports.html">Reports</a></li>
+            </ul>
+            <div class="auth-links">
+                <a href="../index.html" id="logout-link">Sign Out</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <h1>Dashboard</h1>
+
+        <section class="stats-grid">
+            <div class="stat-card">
+                <h2>Total Vehicles</h2>
+                <p class="stat-value" id="stat-vehicles">--</p>
+            </div>
+            <div class="stat-card">
+                <h2>Active Trips</h2>
+                <p class="stat-value" id="stat-trips">--</p>
+            </div>
+            <div class="stat-card">
+                <h2>Pending Bookings</h2>
+                <p class="stat-value" id="stat-bookings">--</p>
+            </div>
+            <div class="stat-card">
+                <h2>Unpaid Invoices</h2>
+                <p class="stat-value" id="stat-invoices">--</p>
+            </div>
+        </section>
+
+        <section class="panel">
+            <h2>Recent Activity</h2>
+            <ul id="recent-activity">
+                <li>Loading...</li>
+            </ul>
+        </section>
+    </main>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/dashboard.js"></script>
+</body>
+</html>

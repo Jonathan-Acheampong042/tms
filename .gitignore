@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+   .claude/settings.local.json
+
+# Secrets — never commit database passwords or API keys
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS / editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

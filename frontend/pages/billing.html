@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billing - TMS</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="../index.html" class="brand">TMS</a>
+            <ul>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="vehicles.html">Vehicles</a></li>
+                <li><a href="drivers.html">Drivers</a></li>
+                <li><a href="trips.html">Trips</a></li>
+                <li><a href="bookings.html">Bookings</a></li>
+                <li><a href="fuel.html">Fuel</a></li>
+                <li><a href="billing.html">Billing</a></li>
+                <li><a href="notifications.html">Notifications</a></li>
+                <li><a href="reports.html">Reports</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h1>Billing</h1>
+
+        <section class="panel">
+            <h2>Invoices</h2>
+            <table id="invoices-table">
+                <thead>
+                    <tr>
+                        <th>Invoice #</th>
+                        <th>Amount</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="5">Loading...</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="panel">
+            <h2>Payments</h2>
+            <table id="payments-table">
+                <thead>
+                    <tr>
+                        <th>Invoice</th>
+                        <th>Amount</th>
+                        <th>Method</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="5">Loading...</td></tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/billing.js"></script>
+</body>
+</html>
