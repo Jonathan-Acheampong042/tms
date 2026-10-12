@@ -1,15 +1,23 @@
-require('dotenv').config();
+﻿require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const pool = require('./db');
+const db = require('./db');
+const startDailyJobs = require('./utils/dailyJobs');
 
 const app = express();
-app.use(cors());
+// Set CORS_ORIGIN (comma separated) to the frontend's address to restrict access.
+app.use(cors({
+  origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : true,
+}));
 app.use(express.json());
+
+app.get('/', (req, res) => {
+  res.send('TMS API is running. Visit /api/vehicles to view vehicles.');
+});
 
 app.get('/api/health', async (req, res) => {
   try {
-    const result = await pool.query('SELECT NOW()');
+    const result = await db.query('SELECT NOW()');
     res.json({ status: 'ok', time: result.rows[0].now });
   } catch (err) {
     console.error(err);
@@ -18,6 +26,27 @@ app.get('/api/health', async (req, res) => {
 });
 
 app.use('/api/vehicles', require('./routes/vehicles'));
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/users', require('./routes/users'));
+app.use('/api/drivers', require('./routes/drivers'));
+app.use('/api/maintenance', require('./routes/maintenance'));
+app.use('/api/fuel', require('./routes/fuel'));
+app.use('/api/routes', require('./routes/routeTemplates'));
+app.use('/api/trips', require('./routes/trips'));
+app.use('/api/incidents', require('./routes/incidents'));
+app.use('/api/bookings', require('./routes/bookings'));
+app.use('/api/invoices', require('./routes/invoices'));
+app.use('/api/payments', require('./routes/payments'));
+app.use('/api/notifications', require('./routes/notifications'));
+app.use('/api/reports', require('./routes/reports'));
+app.use('/api/audit-logs', require('./routes/auditlogs'));
 
-const PORT = process.env.PORT || 3000;
+app.use((error, req, res, next) => {
+  console.error(error);
+  if (res.headersSent) return next(error);
+  return res.status(500).json({ message: 'Internal server error.' });
+});
+
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+startDailyJobs();

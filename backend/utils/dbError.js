@@ -1,6 +1,16 @@
 const handleDbError = (err, res) => {
   console.error(err);
 
+  if (err.code === 'NO_FIELDS') {
+    return res.status(400).json({ message: err.message });
+  }
+  if (err.code === 'P0001') {
+    return res.status(400).json({ message: err.message });
+  }
+  if (err.code === 'P0002') {
+    return res.status(404).json({ message: err.message });
+  }
+
   switch (err.code) {
     case '23505':
       return res.status(409).json({ message: 'That value already exists (e.g. duplicate plate number).' });

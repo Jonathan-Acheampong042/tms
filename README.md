@@ -1,198 +1,238 @@
 # Transport Management System (TMS)
 
-A lightweight, robust Transport Management System (TMS) built with a layered architecture: a PostgreSQL database layer, an Express.js REST API backend, and a static HTML/CSS/JavaScript frontend.
+A system for managing transport operations: vehicles, drivers, trips and routes, fuel, bookings, billing and notifications. The database is built and tested. The Express API now covers authentication and the database-backed operations; the frontend currently consists of page templates.
 
-The project is designed with modularity and extensibility in mind, employing database-level triggers, structured Postgres error handling, atomic stored functions, and fully parameterised queries to prevent security vulnerabilities like SQL Injection.
+**Author:** Jonathan Acheampong
 
----
+## Project status
 
-## Technical Stack
+| Part | Status |
+|---|---|
+| Database (6 schemas, 13 tables, 16 functions, 10 triggers, seed data) | Built and tested |
+| Backend API (Node.js + Express) | Authenticated API for users, fleet, operations, billing, notifications and reports |
+| Frontend | HTML page templates and an `api.js` helper. No page logic yet |
 
-- **Frontend:** HTML5, CSS3, and asynchronous JavaScript (`fetch` API).
-- **Backend:** Node.js, Express.js (Express 5 Router pattern), and the `pg` driver for PostgreSQL pool connectivity.
-- **Database:** PostgreSQL 18 (comprising 14 core tables, custom triggers, audit logging, and stored functions).
+## Tech stack
 
----
+| Layer | Technology |
+|---|---|
+| Database | PostgreSQL 13 or newer (developed on 18), with the `pgcrypto` extension |
+| Backend | Node.js, Express, `pg`, JWT, `bcrypt`, `express-rate-limit` |
+| Frontend | HTML, CSS, JavaScript (`fetch`) |
 
-## System Architecture
+## Project structure
 
 ```
- tms/
- ├── backend/                   # Express.js REST API
- │   ├── middleware/            # Route protection & role checks
- │   │   └── auth.js            # JWT Validation and authentication middleware (Stub)
- │   ├── routes/                # Endpoint controllers
- │   │   ├── vehicles.js        # Implemented Vehicles CRUD routes
- │   │   ├── routeTemplates.js  # Endpoints for the routes table (origin/destination templates)
- │   │   └── ...js              # Stubs for trips, drivers, fuel, billing, etc.
- │   ├── utils/                 # General-purpose utility helpers
- │   │   └── dbError.js         # Shared PostgreSQL error code handler
- │   ├── db.js                  # Pool connection configuration
- │   ├── server.js              # Express app initialization & server entrypoint
- │   └── .env                   # Local backend configuration (ignored)
- ├── database/                  # PostgreSQL schema, functions, and seed datasets
- │   ├── schema.sql             # 14-table relational database model
- │   ├── functions.sql          # Invoicing, assignment, and status-sync triggers
- │   ├── user_functions.sql    # Atomic stored functions for users & password resets
- │   └── seed.sql               # Verified sample data with idempotent safe-re-runs
- ├── frontend/                  # Static UI page views & styling templates
- │   ├── css/                   # Global stylesheet (style.css)
- │   ├── js/                    # Asynchronous fetch and page action files
- │   │   ├── api.js             # Shared fetch helper and centralized BASE_URL
- │   │   └── ...js              # Stubs for page-level state logic
- │   ├── pages/                 # HTML templates for page layouts (logic to be built)
- │   └── index.html             # Entry landing page
- └── README.md                  # Main project guide
+tms/
+├── database/
+│   ├── 00_setup.sql        schemas and the pgcrypto extension
+│   ├── 01_accounts.sql     users and user functions
+│   ├── 02_fleet.sql        vehicles, maintenance, drivers, fuel
+│   ├── 03_operations.sql   routes, trips, incidents, bookings
+│   ├── 04_billing.sql      invoices and payments
+│   ├── 05_monitoring.sql   notifications and audit logs
+│   ├── 06_seed.sql         sample data (development only)
+│   ├── 07_vehicle_insurance.sql     migration for older databases (adds vehicles.insurance)
+│   └── 08_trip_insurance_check.sql  migration for older databases (trip insurance check)
+├── backend/                Express API
+│   ├── server.js, db.js
+│   ├── routes/              API modules for auth, users, fleet, operations,
+│   │                        billing, notifications and reports
+│   ├── middleware/auth.js   JWT authentication and role authorization
+│   └── utils/               crud.js, crudRouter.js, dbError.js
+├── frontend/
+│   ├── index.html
+│   ├── pages/              HTML templates (login, signup, dashboard, vehicles,
+│   │                       drivers, trips, bookings, fuel, billing,
+│   │                       notifications, reports)
+│   ├── css/style.css
+│   └── js/                 api.js helper plus one placeholder script per page
+├── backend-plan.html       planning document for the full API
+├── .gitignore
+└── README.md
 ```
 
----
+## Database design
 
-## Database Schema (14 Tables)
+The tables are split into schemas by module. Each schema holds its own tables and functions. The default `public` schema is not used.
 
-Intermediate route stops are currently not modeled in this system (per supervisor decision). The database is structured into 14 relational tables:
+| Schema | Tables | Functions |
+|---|---|---|
+| `accounts` | `users` | `register_user`, `get_user_for_login`, `update_user_profile`, `deactivate_user`, `request_password_reset`, `get_active_reset`, `record_failed_reset_attempt`, `complete_password_reset` |
+| `fleet` | `vehicles`, `maintenance_records`, `drivers`, `fuel_records` | `register_driver` |
+| `operations` | `routes`, `trips`, `driver_incidents`, `bookings` | `validate_trip_assignment`, `set_trip_times`, `sync_trip_status` (triggers) |
+| `billing` | `invoices`, `payments` | `mark_overdue_invoices`, `update_invoice_after_payment` (trigger) |
+| `monitoring` | `notifications`, `audit_logs` | `log_audit` (trigger), `create_expiry_notifications` |
+| `extensions` | none | holds `pgcrypto` (`crypt`, `gen_salt`) |
 
-| # | Table Name | Purpose |
-| :--- | :--- | :--- |
-| 1 | **users** | Core credentials, profiles, and accounts (`admin`, `customer`, `driver`) |
-| 2 | **password_resets** | Single-use password OTP verification and lockout tracking |
-| 3 | **vehicles** | Plate numbers, categories (`bus`, `truck`, `van`), model details, status |
-| 4 | **maintenance_records** | Service dates, cost, and status per vehicle |
-| 5 | **drivers** | License details, verification, status, and current vehicle |
-| 6 | **routes** | Travel routes (origin, destination, distance, estimated time) |
-| 7 | **trips** | Scheduled and actual times, status, vehicle and driver |
-| 8 | **driver_incidents** | Incidents per driver, with severity, optionally linked to a trip |
-| 9 | **fuel_records** | Litres, cost, and station per vehicle |
-| 10 | **bookings** | Cargo or passenger service requests linked to schedules/trips |
-| 11 | **invoices** | One invoice per booking, with amount, due date, and status |
-| 12 | **payments** | Receipts log sheet (payment modes, status tracking, amount) |
-| 13 | **notifications** | Alerts and reminders for users, with read status |
-| 14 | **audit_logs** | Changes to vehicles, drivers, trips, bookings, invoices, and payments |
+### Tables
 
----
+| Table | Purpose |
+|---|---|
+| `accounts.users` | Accounts for admins, drivers and customers. Names are split into first, middle (optional) and last. Holds the one-time code used for password reset |
+| `fleet.vehicles` | Plate number, category (bus, truck, van), model, capacity, status, insured flag, insurance and license expiry |
+| `fleet.maintenance_records` | Service date, next service date, cost and status per vehicle |
+| `fleet.drivers` | Driver profile for a user: license number, expiry, verification, status, current vehicle |
+| `fleet.fuel_records` | Litres, cost and station per vehicle and driver |
+| `operations.routes` | Origin, destination, distance and estimated duration |
+| `operations.trips` | One scheduled run of a route with a vehicle and driver, with scheduled and actual times |
+| `operations.driver_incidents` | Incidents per driver, with severity, optionally linked to a trip |
+| `operations.bookings` | Passenger or cargo bookings made by a user, optionally allocated to a trip |
+| `billing.invoices` | One invoice per booking, with amount, due date and status |
+| `billing.payments` | Payments against an invoice |
+| `monitoring.notifications` | Alerts and reminders for users, with read status |
+| `monitoring.audit_logs` | Record of changes to vehicles, drivers, trips, bookings, invoices and payments |
 
-## Setting Up and Running the Project
+### Business rules enforced in the database
 
-Follow these steps to configure your local environment and spin up the database and services.
+| Rule | Where |
+|---|---|
+| A trip is rejected if the vehicle is in maintenance or not insured, its insurance or license expires before the trip starts, or the driver is off duty, unverified or has an expired license | `validate_trip_assignment` |
+| `actual_start` and `actual_end` are filled in when a trip starts or completes | `set_trip_times` |
+| Vehicle and driver status follow the trip (`on_trip` while in progress, back to `available` afterwards) | `sync_trip_status` |
+| An invoice becomes `paid` once its completed payments cover the amount | `update_invoice_after_payment` |
+| Unpaid invoices past their due date become `overdue` (call daily) | `mark_overdue_invoices()` |
+| Admins get reminders for expired or soon-to-expire insurance and licenses (call daily) | `create_expiry_notifications()` |
+| Changes to vehicles, drivers, trips, bookings, invoices and payments are logged | `log_audit` |
+| Only a user with the driver role can get a driver profile | `register_driver` |
 
-### 1. Database Setup
+### Design decisions
 
-First, ensure you have PostgreSQL installed (or running in a Docker container on port `5432`). Create a database named `tms_db`:
+- **Primary keys** are UUIDs generated by `gen_random_uuid()`.
+- **Delete rules:** `RESTRICT` protects history (trips, bookings, payments, audit logs), and `CASCADE` is used only for notifications. Users with history are deactivated, not deleted.
+- **Roles:** `admin`, `driver` and `customer`.
+- **Insurance:** each vehicle has an `insurance` flag and an expiry date. A trip is rejected if the flag is false or the date passes before the trip starts.
+- **Passwords** are hashed inside the database with bcrypt (`extensions.crypt`, cost 10). The database receives the plain password and hashes it.
+- **Password reset:** a 6-digit code is stored on the user row with an expiry (10 minutes) and an attempt counter (locked after 5 wrong attempts). The reset only completes if the correct code is supplied.
+- **Route stops** are not modelled, per supervisor decision. A route has an origin and a destination.
+- **Normalization:** the schema is in third normal form.
 
+## Backend API
+
+| Method | Endpoint |
+|---|---|
+| GET | `/api/health` |
+| POST | `/api/auth/register`, `/api/auth/login`, `/api/auth/request-reset`, `/api/auth/complete-reset` |
+| GET | `/api/users/me` |
+| PUT | `/api/users/profile` |
+| DELETE | `/api/users/:id` (deactivates account) |
+| GET, POST, PUT, PATCH, DELETE | `/api/vehicles`, `/api/vehicles/:id` |
+| GET, POST, PUT, PATCH | `/api/maintenance`, `/api/maintenance/:id` |
+| GET, POST, PUT, PATCH | `/api/routes`, `/api/routes/:id` |
+| GET, POST | `/api/drivers`, `/api/fuel`, `/api/incidents`, `/api/bookings`, `/api/invoices`, `/api/payments` |
+| PUT, PATCH | `/api/bookings/:id` |
+| PUT | `/api/drivers/:id/verify`, `/api/payments/:id`, `/api/trips/:id/status`, `/api/notifications/:id`, `/api/notifications/read-all` |
+| GET | `/api/trips`, `/api/notifications`, `/api/reports`, `/api/audit-logs` |
+
+To run it: `cd backend`, `npm install`, configure `PORT`, `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, and a strong `JWT_SECRET` in `backend/.env`, then `npm run dev`. Set `JWT_EXPIRES_IN` to override the default eight-hour token lifetime.
+
+**Fields are not repeated in generic CRUD routes.** `utils/crud.js` discovers writable table columns from PostgreSQL's `information_schema`; the database schema remains the source of column constraints and defaults. SQL values are parameterized, and dynamic identifiers are selected from that metadata rather than the request. Domain-specific operations use the database functions and triggers where available. Authenticated routes require a bearer token; public signup creates customer accounts only, while admins create driver accounts.
+
+The profile endpoints read from `accounts.user_profiles` and `fleet.driver_details`, created by `database/09_backend_views.sql`. The server also runs `billing.mark_overdue_invoices()` and `monitoring.create_expiry_notifications(30)` daily at midnight UTC. Set `DAILY_JOBS_TIMEZONE` to an IANA timezone (for example, `America/New_York`) to change the schedule's timezone.
+
+## Setup
+
+### 1. Create the database
 ```bash
 createdb -U postgres tms_db
 ```
-
-Apply the database scripts **in the exact order** listed below. This order resolves all dependencies.
-
-*Note for Windows users:* If `psql` is not recognized in your command line, add the PostgreSQL `bin` folder to your system `PATH`, or open the **pgAdmin Query Tool**, connect to the `tms_db` database, and paste the contents of each file to execute them in order.
-
-```bash
-# 1. Base database tables and relationships
-psql -U postgres -d tms_db -f database/schema.sql
-
-# 2. Automation triggers and status-sync functions
-psql -U postgres -d tms_db -f database/functions.sql
-
-# 3. Custom authentication, user profiles and password reset functions
-psql -U postgres -d tms_db -f database/user_functions.sql
-
-# 4. Populating sample data (safe to re-run multiple times)
-psql -U postgres -d tms_db -f database/seed.sql
+Optionally remove the unused default schema:
+```sql
+DROP SCHEMA public;
 ```
 
-### 2. Backend API Setup
+### 2. Run the SQL files in order
+From the project root:
+```bash
+psql -U postgres -d tms_db -v ON_ERROR_STOP=1 -f database/00_setup.sql
+psql -U postgres -d tms_db -v ON_ERROR_STOP=1 -f database/01_accounts.sql
+psql -U postgres -d tms_db -v ON_ERROR_STOP=1 -f database/02_fleet.sql
+psql -U postgres -d tms_db -v ON_ERROR_STOP=1 -f database/03_operations.sql
+psql -U postgres -d tms_db -v ON_ERROR_STOP=1 -f database/04_billing.sql
+psql -U postgres -d tms_db -v ON_ERROR_STOP=1 -f database/05_monitoring.sql
+psql -U postgres -d tms_db -v ON_ERROR_STOP=1 -f database/06_seed.sql
+psql -U postgres -d tms_db -v ON_ERROR_STOP=1 -f database/09_backend_views.sql
+```
+The order matters, because later files reference tables and functions from earlier ones. The `NOTICE: trigger ... does not exist, skipping` messages are normal on a first run.
 
-1. Navigate to the `backend/` directory:
-   ```bash
-   cd backend
-   ```
-2. Install the necessary dependencies:
-   ```bash
-   npm install
-   ```
-3. Create a `.env` file in the `backend/` directory with your database connection details and auth secrets:
-   ```env
-   PORT=3001
-   DB_HOST=localhost
-   DB_PORT=5432
-   DB_NAME=tms_db
-   DB_USER=postgres
-   DB_PASSWORD=your_postgres_password
-   
-   # Authentication Secrets (Planned)
-   JWT_SECRET=your_super_secure_jwt_secret_key_here
-   JWT_EXPIRES_IN=1h
-   ```
-4. Start the server in development mode (using Nodemon for auto-reload):
-   ```bash
-   npm run dev
-   ```
-   Or in production start mode:
-   ```bash
-   npm start
-   ```
+On Windows, if `psql` is not recognized, add the PostgreSQL `bin` folder to your `PATH`, or open each file in the pgAdmin Query Tool (connected to `tms_db`) and run it in the same order.
 
-The backend server runs on `http://localhost:3001`. You can test the connection with a healthcheck request to `http://localhost:3001/api/health`.
+### Updating an existing database (migrations)
+A fresh build already contains everything, so skip this. If your database was built before these changes, run the matching migration in pgAdmin:
 
-### 3. Frontend Web Client Setup
+| File | What it does |
+|---|---|
+| `07_vehicle_insurance.sql` | Adds the `insurance` column to `fleet.vehicles` (safe to re-run) |
+| `08_trip_insurance_check.sql` | Replaces `operations.validate_trip_assignment()` so an uninsured vehicle cannot be put on a trip. Triggers and data are untouched |
+| `09_backend_views.sql` | Creates/replaces the API-safe `accounts.user_profiles` and `fleet.driver_details` views |
 
-To open the application:
-- Serve the files locally using a lightweight server (e.g. `npx serve frontend` or VS Code Live Server).
-- Or, directly double-click `frontend/index.html` in your file explorer to open it in any modern browser.
+In pgAdmin: right-click `tms_db`, choose **Query Tool**, click the **Open File** folder icon, pick the file, and press **F5**. The result should say the query returned successfully.
 
----
+### 3. Rebuild from scratch
+This deletes all data in these schemas. Run it, then repeat step 2:
+```sql
+DROP SCHEMA IF EXISTS monitoring, billing, operations, fleet, accounts CASCADE;
+```
 
-## Local Testing Logins
+### 4. Check the result
+```sql
+SELECT COUNT(*) FROM information_schema.tables
+WHERE table_schema IN ('accounts','fleet','operations','billing','monitoring')
+  AND table_type = 'BASE TABLE';                              -- 13
 
-These share a development password that is public in this README. Never use it outside local testing.
+SELECT status, COUNT(*) FROM operations.trips GROUP BY status ORDER BY status;
+  -- completed 2, in_progress 1, scheduled 1
+SELECT status, COUNT(*) FROM fleet.vehicles GROUP BY status ORDER BY status;
+  -- available 2, maintenance 1, on_trip 1
+SELECT status, COUNT(*) FROM billing.invoices GROUP BY status ORDER BY status;
+  -- paid 1, unpaid 2
+SELECT billing.mark_overdue_invoices();                        -- 1
+```
+The trip, vehicle and invoice counts come from the triggers, for example the truck is `on_trip` because a seeded trip is in progress.
 
-| Username | Role | Purpose |
-| :--- | :--- | :--- |
-| **admin_jon** | `admin` | Administrator |
-| **admin_ama** | `admin` | Administrator |
-| **customer_kofi** | `customer` | Customer |
-| **customer_efua** | `customer` | Customer (Heavy cargo) |
-| **driver_kwame** | `driver` | Driver |
-| **driver_yaw** | `driver` | Driver |
+## Sample data and test accounts
 
-*Password for all accounts:* `Password123`
+`06_seed.sql` loads six users, four vehicles, three routes, four trips, bookings, invoices, a payment, notifications and audit entries. It can be re-run safely, because it deletes its own rows first. It is for development only and must not be run where real data exists.
 
----
+| Username | Role |
+|---|---|
+| `admin_jon`, `admin_ama` | admin |
+| `customer_kofi`, `customer_efua` | customer |
+| `driver_kwame`, `driver_yaw` | driver |
 
-## Current Status and API Tables
+All six share the development password `Password123`, which is public in this file. There is no login screen connected yet, but you can check a password in SQL:
+```sql
+SELECT password_hash = extensions.crypt('Password123', password_hash) AS password_ok
+FROM accounts.users WHERE username = 'admin_jon';
+```
 
-### Available Core Services
-| Entity | Type | Handler File | Implemented Endpoints | Status |
-| :--- | :--- | :--- | :--- | :--- |
-| **Vehicles** | REST API | `routes/vehicles.js` | GET `/`, GET `/:id`, POST `/`, PUT `/:id`, DELETE `/:id` | **Implemented** |
-| **All Other Routes** | REST API | `routes/*.js` | None | **Stub files exist but are not mounted in server.js yet.** |
-| **Authentication** | Middleware | `middleware/auth.js` | None | **Planned** (JWT protection) |
+## Requirements coverage
 
-### Frontend Page Templates
-*Note: Page layouts are structured in HTML with navigation, forms, and headers; dynamic API fetching and data binding is to be built next.*
+| Requirement | Status |
+|---|---|
+| User management, roles, password reset | Database functions and API routes implemented; reset delivery is development-only |
+| Vehicle management, maintenance, expiry alerts | Database and API routes implemented |
+| Driver management, license verification, incidents | Database and API routes implemented |
+| Trip and route management, status tracking | Database and API routes implemented. Route stops not modelled |
+| Fuel records | Database and API routes implemented; efficiency reports and anomaly detection not built |
+| Booking and dispatch | Database and API routes implemented. Automatic trip allocation not built |
+| Billing and payments | Database and API routes implemented; payment gateway integration not built |
+| Reporting and analytics | Basic fleet, trip and payment summaries implemented |
+| Notifications and alerts | User notification routes and expiry reminder function implemented; delivery (email, SMS) not built |
+| Audit logs | Done for six tables |
+| Two-factor authentication | A flag exists on the user. Not implemented |
+| Backup, scalability, performance targets | Not addressed yet |
 
-- **index.html**: Main landing page with navigations.
-- **pages/login.html & signup.html**: Account authentication forms.
-- **pages/dashboard.html**: Panels designed to display system metrics.
-- **pages/vehicles.html**: Tables for listing vehicles and interactive options.
-- **pages/drivers.html**: Active driver list panels and status tables.
-- **pages/trips.html**: Route dispatch layouts and trip logs.
-- **pages/bookings.html**: Booking registration forms and invoice status grids.
-- **pages/fuel.html**: Log forms for fuel purchases and vehicle consumption cards.
-- **pages/billing.html**: Invoice tables and payment logs.
-- **pages/notifications.html**: Notification listings (breakdown, reminders, logs).
-- **pages/reports.html**: Layout containers for utilization and revenue reports.
+## Security notes
 
----
+- Seeded accounts use a public development password. Never use the seed outside local testing.
+- The database receives plain passwords for hashing and reset codes for temporary storage. Use TLS between the API and PostgreSQL and do not enable statement logging.
+- The reset code is stored in plain text for at most 10 minutes. That is acceptable for this project but would be hashed in a production system.
+- Use a strong, private `JWT_SECRET`; never expose it to the frontend or commit it.
+- Password-reset OTPs are only logged in non-production development mode. Reset requests return 503 in production until email/SMS delivery is configured.
 
-## Security and Production Notice
+## Planned work
 
-- **Development Only:** The API does not have security filters or Authorization headers mounted on POST, PUT, and DELETE endpoints yet. For safety, the system should only be run and served on local environments (`localhost`).
-- **Authorization Blockers:** Do not deploy or expose these routes to public networks until JWT validation middleware (`middleware/auth.js`) is completed and connected to all write/destructive routes.
-
----
-
-## Planned Enhancements
-- **Securing API Endpoints:** Add JWT role checks to enforce that only administrative accounts (`role = 'admin'`) can execute POST, PUT, and DELETE methods.
-- **Dynamic Frontend JS:** Bind the placeholder JS files to the fetch helpers in `frontend/js/api.js` to hydrate page tables in real time from the database.
-- **Real-Time Web Sockets:** Introduce notification streams when breakdowns or vehicle delays are registered.
+- Automated backend tests and deployment configuration.
+- Frontend page logic using `frontend/js/api.js`.
+- Reports, fuel anomaly detection, and OTP delivery by email or SMS.
