@@ -1,8 +1,7 @@
-﻿require('dotenv').config();
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const db = require('./db');
-const startDailyJobs = require('./utils/dailyJobs');
 
 const app = express();
 // Set CORS_ORIGIN (comma separated) to the frontend's address to restrict access.
@@ -26,20 +25,6 @@ app.get('/api/health', async (req, res) => {
 });
 
 app.use('/api/vehicles', require('./routes/vehicles'));
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/users', require('./routes/users'));
-app.use('/api/drivers', require('./routes/drivers'));
-app.use('/api/maintenance', require('./routes/maintenance'));
-app.use('/api/fuel', require('./routes/fuel'));
-app.use('/api/routes', require('./routes/routeTemplates'));
-app.use('/api/trips', require('./routes/trips'));
-app.use('/api/incidents', require('./routes/incidents'));
-app.use('/api/bookings', require('./routes/bookings'));
-app.use('/api/invoices', require('./routes/invoices'));
-app.use('/api/payments', require('./routes/payments'));
-app.use('/api/notifications', require('./routes/notifications'));
-app.use('/api/reports', require('./routes/reports'));
-app.use('/api/audit-logs', require('./routes/auditlogs'));
 
 app.use((error, req, res, next) => {
   console.error(error);
@@ -49,4 +34,3 @@ app.use((error, req, res, next) => {
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-startDailyJobs();

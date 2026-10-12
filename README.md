@@ -1,6 +1,6 @@
 # Transport Management System (TMS)
 
-A system for managing transport operations: vehicles, drivers, trips and routes, fuel, bookings, billing and notifications. The database is built and tested. The Express API now covers authentication and the database-backed operations; the frontend currently consists of page templates.
+A transport management system with a PostgreSQL database, a small Express API baseline, and frontend page templates.
 
 **Author:** Jonathan Acheampong
 
@@ -9,7 +9,7 @@ A system for managing transport operations: vehicles, drivers, trips and routes,
 | Part | Status |
 |---|---|
 | Database (6 schemas, 13 tables, 16 functions, 10 triggers, seed data) | Built and tested |
-| Backend API (Node.js + Express) | Authenticated API for users, fleet, operations, billing, notifications and reports |
+| Backend API (Node.js + Express) | Vehicles-only baseline; no authentication yet |
 | Frontend | HTML page templates and an `api.js` helper. No page logic yet |
 
 ## Tech stack
@@ -17,7 +17,7 @@ A system for managing transport operations: vehicles, drivers, trips and routes,
 | Layer | Technology |
 |---|---|
 | Database | PostgreSQL 13 or newer (developed on 18), with the `pgcrypto` extension |
-| Backend | Node.js, Express, `pg`, JWT, `bcrypt`, `express-rate-limit` |
+| Backend | Node.js, Express, `pg` |
 | Frontend | HTML, CSS, JavaScript (`fetch`) |
 
 ## Project structure
@@ -36,10 +36,8 @@ tms/
 │   └── 08_trip_insurance_check.sql  migration for older databases (trip insurance check)
 ├── backend/                Express API
 │   ├── server.js, db.js
-│   ├── routes/              API modules for auth, users, fleet, operations,
-│   │                        billing, notifications and reports
-│   ├── middleware/auth.js   JWT authentication and role authorization
-│   └── utils/               crud.js, crudRouter.js, dbError.js
+│   ├── routes/vehicles.js
+│   └── utils/               crud.js, dbError.js
 ├── frontend/
 │   ├── index.html
 │   ├── pages/              HTML templates (login, signup, dashboard, vehicles,
@@ -109,26 +107,17 @@ The tables are split into schemas by module. Each schema holds its own tables an
 
 ## Backend API
 
+The current `master` branch is a small vehicles-only baseline. It has no authentication or other business API routes. The complete backend implementation is preserved on the `backend-full` branch.
+
 | Method | Endpoint |
 |---|---|
 | GET | `/api/health` |
-| POST | `/api/auth/register`, `/api/auth/login`, `/api/auth/request-reset`, `/api/auth/complete-reset` |
-| GET | `/api/users/me` |
-| PUT | `/api/users/profile` |
-| DELETE | `/api/users/:id` (deactivates account) |
-| GET, POST, PUT, PATCH, DELETE | `/api/vehicles`, `/api/vehicles/:id` |
-| GET, POST, PUT, PATCH | `/api/maintenance`, `/api/maintenance/:id` |
-| GET, POST, PUT, PATCH | `/api/routes`, `/api/routes/:id` |
-| GET, POST | `/api/drivers`, `/api/fuel`, `/api/incidents`, `/api/bookings`, `/api/invoices`, `/api/payments` |
-| PUT, PATCH | `/api/bookings/:id` |
-| PUT | `/api/drivers/:id/verify`, `/api/payments/:id`, `/api/trips/:id/status`, `/api/notifications/:id`, `/api/notifications/read-all` |
-| GET | `/api/trips`, `/api/notifications`, `/api/reports`, `/api/audit-logs` |
+| GET, POST | `/api/vehicles` |
+| GET, PATCH, DELETE | `/api/vehicles/:id` |
 
-To run it: `cd backend`, `npm install`, configure `PORT`, `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, and a strong `JWT_SECRET` in `backend/.env`, then `npm run dev`. Set `JWT_EXPIRES_IN` to override the default eight-hour token lifetime.
+To run it: from `backend/`, run `npm install`, configure `PORT`, `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, and `DB_PASSWORD` in `backend/.env`, then run `npm start`.
 
-**Fields are not repeated in generic CRUD routes.** `utils/crud.js` discovers writable table columns from PostgreSQL's `information_schema`; the database schema remains the source of column constraints and defaults. SQL values are parameterized, and dynamic identifiers are selected from that metadata rather than the request. Domain-specific operations use the database functions and triggers where available. Authenticated routes require a bearer token; public signup creates customer accounts only, while admins create driver accounts.
-
-The profile endpoints read from `accounts.user_profiles` and `fleet.driver_details`, created by `database/09_backend_views.sql`. The server also runs `billing.mark_overdue_invoices()` and `monitoring.create_expiry_notifications(30)` daily at midnight UTC. Set `DAILY_JOBS_TIMEZONE` to an IANA timezone (for example, `America/New_York`) to change the schedule's timezone.
+`utils/crud.js` reads vehicle column names from PostgreSQL metadata. Column constraints and defaults remain defined by the database.
 
 ## Setup
 
@@ -210,29 +199,22 @@ FROM accounts.users WHERE username = 'admin_jon';
 
 | Requirement | Status |
 |---|---|
-| User management, roles, password reset | Database functions and API routes implemented; reset delivery is development-only |
-| Vehicle management, maintenance, expiry alerts | Database and API routes implemented |
-| Driver management, license verification, incidents | Database and API routes implemented |
-| Trip and route management, status tracking | Database and API routes implemented. Route stops not modelled |
-| Fuel records | Database and API routes implemented; efficiency reports and anomaly detection not built |
-| Booking and dispatch | Database and API routes implemented. Automatic trip allocation not built |
-| Billing and payments | Database and API routes implemented; payment gateway integration not built |
-| Reporting and analytics | Basic fleet, trip and payment summaries implemented |
-| Notifications and alerts | User notification routes and expiry reminder function implemented; delivery (email, SMS) not built |
-| Audit logs | Done for six tables |
+| User management, roles, password reset | Database support exists; not exposed by the baseline API |
+| Vehicle management | Vehicles API baseline available |
+| Maintenance, drivers, trips, routes, fuel, bookings, billing, notifications and reports | Database support exists; not exposed by the baseline API |
+| Audit logs | Database support exists; not exposed by the baseline API |
 | Two-factor authentication | A flag exists on the user. Not implemented |
 | Backup, scalability, performance targets | Not addressed yet |
 
 ## Security notes
 
 - Seeded accounts use a public development password. Never use the seed outside local testing.
-- The database receives plain passwords for hashing and reset codes for temporary storage. Use TLS between the API and PostgreSQL and do not enable statement logging.
-- The reset code is stored in plain text for at most 10 minutes. That is acceptable for this project but would be hashed in a production system.
-- Use a strong, private `JWT_SECRET`; never expose it to the frontend or commit it.
-- Password-reset OTPs are only logged in non-production development mode. Reset requests return 503 in production until email/SMS delivery is configured.
+- The baseline API has no authentication yet. Do not expose it to untrusted networks.
+- Keep database credentials in the ignored `backend/.env`; never commit secrets.
 
 ## Planned work
 
+- Authentication and the remaining API routes can be restored from the `backend-full` branch.
 - Automated backend tests and deployment configuration.
 - Frontend page logic using `frontend/js/api.js`.
 - Reports, fuel anomaly detection, and OTP delivery by email or SMS.
