@@ -1,0 +1,10 @@
+/**
+ * Drivers Page Styles – drivers.html
+ */
+
+#drivers-table th:last-child,
+#drivers-table td:last-child {
+    text-align: right;
+    white-space: nowrap;
+}
+

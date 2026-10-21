@@ -1,6 +1,6 @@
-# Transport Management System (TMS)
+# Transport Management System
 
-A transport management system with a PostgreSQL database, a small Express API baseline, and frontend page templates.
+A transport management system with a PostgreSQL database, an Express API, and a browser-based frontend.
 
 **Author:** Jonathan Acheampong
 
@@ -8,16 +8,16 @@ A transport management system with a PostgreSQL database, a small Express API ba
 
 | Part | Status |
 |---|---|
-| Database (6 schemas, 13 tables, 16 functions, 10 triggers, seed data) | Built and tested |
-| Backend API (Node.js + Express) | Vehicles-only baseline; no authentication yet |
-| Frontend | HTML page templates and an `api.js` helper. No page logic yet |
+| Database | PostgreSQL schemas, tables, functions, triggers, and seed data are built and tested |
+| Backend API (Node.js + Express) | Login and public endpoints for users, drivers, fleet, operations, billing, and monitoring; no session or access control |
+| Frontend | Multicolour landing page, customer signup, and login check implemented; operational pages are still templates |
 
 ## Tech stack
 
 | Layer | Technology |
 |---|---|
 | Database | PostgreSQL 13 or newer (developed on 18), with the `pgcrypto` extension |
-| Backend | Node.js, Express, `pg` |
+| Backend | Node.js, Express, `pg`, `express-rate-limit` |
 | Frontend | HTML, CSS, JavaScript (`fetch`) |
 
 ## Project structure
@@ -33,18 +33,29 @@ tms/
 │   ├── 05_monitoring.sql   notifications and audit logs
 │   ├── 06_seed.sql         sample data (development only)
 │   ├── 07_vehicle_insurance.sql     migration for older databases (adds vehicles.insurance)
-│   └── 08_trip_insurance_check.sql  migration for older databases (trip insurance check)
+│   ├── 08_trip_insurance_check.sql  migration for older databases (trip insurance check)
+│   ├── 09_backend_views.sql         API-safe user and driver views
+│   ├── 10_vehicle_api.sql           vehicle CRUD database functions
+│   ├── 11_authentication.sql        login credential verification function
+│   ├── 12_user_driver_api.sql       JSON adapters for user and driver routes
+│   ├── 13_backend_api.sql           shared and specialized API functions for other resources
+│   ├── 14_admin_registration.sql    JSON adapter for administrator account registration
+│   ├── 15_database_rules.sql        account, trip-state, and driver-verification rules
+│   └── 16_billing_pagination.sql    indexed invoice/payment pagination and filtering
 ├── backend/                Express API
 │   ├── server.js, db.js
-│   ├── routes/vehicles.js
-│   └── utils/               crud.js, dbError.js
+│   ├── routes/              auth.js, users.js, drivers.js, maintenance.js,
+│   │                        routeTemplates.js, trips.js, bookings.js,
+│   │                        invoices.js, payments.js, fuel.js, incidents.js,
+│   │                        notifications.js, auditLogs.js, reports.js, vehicles.js
+│   └── utils/               apiTable.js, dbError.js
 ├── frontend/
 │   ├── index.html
-│   ├── pages/              HTML templates (login, signup, dashboard, vehicles,
-│   │                       drivers, trips, bookings, fuel, billing,
-│   │                       notifications, reports)
+│   ├── pages/              HTML pages (landing, login, signup, role dashboards,
+│   │                       profile, user management, vehicles, drivers, trips,
+│   │                       bookings, fuel, billing, notifications, reports)
 │   ├── css/style.css
-│   └── js/                 api.js helper plus one placeholder script per page
+│   └── js/                 API, authentication, role navigation, and profile scripts
 ├── backend-plan.html       planning document for the full API
 ├── .gitignore
 └── README.md
@@ -107,17 +118,55 @@ The tables are split into schemas by module. Each schema holds its own tables an
 
 ## Backend API
 
-The current `master` branch is a small vehicles-only baseline. It has no authentication or other business API routes. The complete backend implementation is preserved on the `backend-full` branch.
+The current `master` branch exposes the database-backed endpoints listed below. Login checks credentials and returns the public user row, but does not create a session or token. These API endpoints have no authentication or role checks. The complete backend implementation is preserved on the `backend-full` branch.
 
 | Method | Endpoint |
 |---|---|
 | GET | `/api/health` |
+| POST | `/api/auth/login` |
+| GET, POST | `/api/users` |
+| GET | `/api/users/:id` |
+| PUT | `/api/users/:id/profile` |
+| DELETE | `/api/users/:id` |
+| GET, POST | `/api/drivers` |
+| GET | `/api/drivers/:id` |
+| GET, POST | `/api/maintenance` |
+| GET, PUT, PATCH | `/api/maintenance/:id` |
+| GET, POST | `/api/route-templates` |
+| GET, PUT, PATCH | `/api/route-templates/:id` |
+| GET, POST | `/api/trips` |
+| GET | `/api/trips/:id` |
+| PUT, PATCH | `/api/trips/:id/status` |
+| GET, POST | `/api/bookings` |
+| GET, PUT, PATCH | `/api/bookings/:id` |
+| GET, POST | `/api/invoices` |
+| GET | `/api/invoices/:id` |
+| GET, POST | `/api/payments` |
+| GET, PUT, PATCH | `/api/payments/:id` |
+| GET | `/api/billing/invoices?page=1&pageSize=25&status=unpaid&from=YYYY-MM-DD&to=YYYY-MM-DD&search=...` |
+| GET | `/api/billing/payments?page=1&pageSize=25&status=pending&from=YYYY-MM-DD&to=YYYY-MM-DD&search=...` |
+| GET | `/api/billing/invoices/export?format=csv|pdf` |
+| GET | `/api/billing/payments/export?format=csv|pdf` |
+| GET, POST | `/api/fuel` |
+| GET | `/api/fuel/:id` |
+| GET, POST | `/api/incidents` |
+| GET | `/api/incidents/:id` |
+| GET | `/api/notifications?user_id=:id` |
+| PUT | `/api/notifications/:id` |
+| PUT | `/api/notifications/read-all` (body: `user_id`) |
+| GET | `/api/audit-logs?limit=:n&offset=:n` |
+| GET | `/api/reports` |
+| GET | `/api/reports/export?format=csv|pdf` |
 | GET, POST | `/api/vehicles` |
 | GET, PATCH, DELETE | `/api/vehicles/:id` |
 
-To run it: from `backend/`, run `npm install`, configure `PORT`, `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, and `DB_PASSWORD` in `backend/.env`, then run `npm start`.
+To run the frontend, open a terminal in `frontend/` and run `npm start`; it serves the static pages at `http://localhost:3011` (override with `FRONTEND_PORT`). To run the API, open a separate terminal in `backend/`, run `npm install`, configure `PORT`, `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, and `DB_PASSWORD` in `backend/.env`, then run `npm start` (API defaults to port 3001).
 
-`utils/crud.js` reads vehicle column names from PostgreSQL metadata. Column constraints and defaults remain defined by the database.
+The login route returns the public row from `accounts.authenticate_user()` in `database/11_authentication.sql`; credential verification stays in PostgreSQL. It does not issue a JWT or establish a session. Signup dispatches customers and drivers to the existing functions in `database/12_user_driver_api.sql`; administrator signup uses `accounts.create_admin()` in `database/14_admin_registration.sql`. Role-specific dashboard pages are frontend navigation only, not authorization. Anyone can register as an administrator, and operational APIs/pages are not protected; do not expose this build to untrusted users.
+
+The dashboard reads its vehicle, active-trip, pending-booking, and unpaid-invoice counts from `/api/reports`; recent activity comes from `/api/audit-logs`. The report summary is calculated in PostgreSQL.
+
+The billing workspace requests paginated invoice and payment results (25 rows by default, maximum 100 per page), with status, date-range, and invoice-number filters. CSV/PDF billing exports use the same filters; CSV exports are limited to 10,000 records and PDF exports to 500. The Reports page displays and exports the all-time summary returned by `/api/reports`.
 
 ## Setup
 
@@ -141,6 +190,13 @@ psql -U postgres -d tms_db -v ON_ERROR_STOP=1 -f database/04_billing.sql
 psql -U postgres -d tms_db -v ON_ERROR_STOP=1 -f database/05_monitoring.sql
 psql -U postgres -d tms_db -v ON_ERROR_STOP=1 -f database/06_seed.sql
 psql -U postgres -d tms_db -v ON_ERROR_STOP=1 -f database/09_backend_views.sql
+psql -U postgres -d tms_db -v ON_ERROR_STOP=1 -f database/10_vehicle_api.sql
+psql -U postgres -d tms_db -v ON_ERROR_STOP=1 -f database/11_authentication.sql
+psql -U postgres -d tms_db -v ON_ERROR_STOP=1 -f database/12_user_driver_api.sql
+psql -U postgres -d tms_db -v ON_ERROR_STOP=1 -f database/13_backend_api.sql
+psql -U postgres -d tms_db -v ON_ERROR_STOP=1 -f database/14_admin_registration.sql
+psql -U postgres -d tms_db -v ON_ERROR_STOP=1 -f database/15_database_rules.sql
+psql -U postgres -d tms_db -v ON_ERROR_STOP=1 -f database/16_billing_pagination.sql
 ```
 The order matters, because later files reference tables and functions from earlier ones. The `NOTICE: trigger ... does not exist, skipping` messages are normal on a first run.
 
@@ -153,9 +209,27 @@ A fresh build already contains everything, so skip this. If your database was bu
 |---|---|
 | `07_vehicle_insurance.sql` | Adds the `insurance` column to `fleet.vehicles` (safe to re-run) |
 | `08_trip_insurance_check.sql` | Replaces `operations.validate_trip_assignment()` so an uninsured vehicle cannot be put on a trip. Triggers and data are untouched |
-| `09_backend_views.sql` | Creates/replaces the API-safe `accounts.user_profiles` and `fleet.driver_details` views |
+| `09_backend_views.sql` | Creates/replaces safe profile views used by the users and drivers routes |
+| `10_vehicle_api.sql` | Creates/replaces the vehicle list, get, create, update and delete functions |
+| `11_authentication.sql` | Creates/replaces the database login credential verification function |
+| `12_user_driver_api.sql` | Creates/replaces JSON request adapters for customer creation, profile update, and driver creation |
+| `13_backend_api.sql` | Creates/replaces shared resource, trip, fuel, notification, audit-log, and report API functions |
+| `14_admin_registration.sql` | Creates/replaces the JSON adapter for administrator account registration |
+| `15_database_rules.sql` | Adds user email/name checks, a forward-only trip status transition, and driver verification |
+| `16_billing_pagination.sql` | Adds billing list functions and indexes for paginated/filterable invoice and payment queries |
 
-In pgAdmin: right-click `tms_db`, choose **Query Tool**, click the **Open File** folder icon, pick the file, and press **F5**. The result should say the query returned successfully.
+Apply any missing files to an existing database from the project root, in this order:
+```bash
+psql -U postgres -d tms_db -v ON_ERROR_STOP=1 -f database/09_backend_views.sql
+psql -U postgres -d tms_db -v ON_ERROR_STOP=1 -f database/10_vehicle_api.sql
+psql -U postgres -d tms_db -v ON_ERROR_STOP=1 -f database/11_authentication.sql
+psql -U postgres -d tms_db -v ON_ERROR_STOP=1 -f database/12_user_driver_api.sql
+psql -U postgres -d tms_db -v ON_ERROR_STOP=1 -f database/13_backend_api.sql
+psql -U postgres -d tms_db -v ON_ERROR_STOP=1 -f database/14_admin_registration.sql
+psql -U postgres -d tms_db -v ON_ERROR_STOP=1 -f database/15_database_rules.sql
+psql -U postgres -d tms_db -v ON_ERROR_STOP=1 -f database/16_billing_pagination.sql
+```
+Files 09-14 create or replace views and functions; files 15-16 add database constraints, functions, and indexes. Before running 15 on a populated database, check that existing users satisfy its new email and non-blank name constraints. If using pgAdmin instead, connect to `tms_db`, open each needed file from the project root in Query Tool, and execute the entire file with **F5**, in the same order.
 
 ### 3. Rebuild from scratch
 This deletes all data in these schemas. Run it, then repeat step 2:
@@ -189,7 +263,7 @@ The trip, vehicle and invoice counts come from the triggers, for example the tru
 | `customer_kofi`, `customer_efua` | customer |
 | `driver_kwame`, `driver_yaw` | driver |
 
-All six share the development password `Password123`, which is public in this file. There is no login screen connected yet, but you can check a password in SQL:
+All six share the development password `Password123`, which is public in this file. You can sign in through the login screen with one of these accounts, or check a password in SQL:
 ```sql
 SELECT password_hash = extensions.crypt('Password123', password_hash) AS password_ok
 FROM accounts.users WHERE username = 'admin_jon';
@@ -199,22 +273,24 @@ FROM accounts.users WHERE username = 'admin_jon';
 
 | Requirement | Status |
 |---|---|
-| User management, roles, password reset | Database support exists; not exposed by the baseline API |
+| User profiles and account deactivation | Public users API available; no authentication or role checks |
 | Vehicle management | Vehicles API baseline available |
-| Maintenance, drivers, trips, routes, fuel, bookings, billing, notifications and reports | Database support exists; not exposed by the baseline API |
-| Audit logs | Database support exists; not exposed by the baseline API |
+| Driver profiles | Public drivers API available; no authentication or role checks |
+| Billing and reports | Paginated billing views and CSV/PDF exports connected; API still has no authentication or role checks |
+| Audit logs | Public read-only endpoint available |
+| Landing, login and signup UI | Transport Management System branding; customer signup and credential check are connected to the API |
 | Two-factor authentication | A flag exists on the user. Not implemented |
 | Backup, scalability, performance targets | Not addressed yet |
 
 ## Security notes
 
 - Seeded accounts use a public development password. Never use the seed outside local testing.
-- The baseline API has no authentication yet. Do not expose it to untrusted networks.
+- Login only verifies credentials; it does not authenticate later requests. All routes are public, including user deactivation, billing records, audit logs, and vehicle create/update/delete. Notification routes accept a caller-supplied user ID. Do not expose this API to untrusted networks.
 - Keep database credentials in the ignored `backend/.env`; never commit secrets.
 
 ## Planned work
 
-- Authentication and the remaining API routes can be restored from the `backend-full` branch.
+- More complete API implementations are preserved on the `backend-full` branch.
 - Automated backend tests and deployment configuration.
-- Frontend page logic using `frontend/js/api.js`.
-- Reports, fuel anomaly detection, and OTP delivery by email or SMS.
+- Frontend data pages for the remaining API routes using `frontend/js/api.js`.
+- Fuel anomaly detection and OTP delivery by email or SMS.

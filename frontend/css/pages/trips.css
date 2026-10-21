@@ -1,0 +1,10 @@
+/**
+ * Trips Page Styles – trips.html
+ */
+
+#trips-table th:last-child,
+#trips-table td:last-child {
+    text-align: right;
+    white-space: nowrap;
+}
+

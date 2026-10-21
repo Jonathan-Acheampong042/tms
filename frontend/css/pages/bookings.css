@@ -1,0 +1,10 @@
+/**
+ * Bookings Page Styles – bookings.html
+ */
+
+#bookings-table th:last-child,
+#bookings-table td:last-child {
+    text-align: right;
+    white-space: nowrap;
+}
+

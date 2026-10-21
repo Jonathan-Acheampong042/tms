@@ -1,0 +1,7 @@
+{
+  "name": "transport-management-system-frontend",
+  "private": true,
+  "scripts": {
+    "start": "node server.js"
+  }
+}

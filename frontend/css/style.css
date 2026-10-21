@@ -1,20 +1,5 @@
-body{
-    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-}
-
-h1{
-    text-align: center;
-}
-.container{
-    text-align: center;
-    
-}
-
-a{
-    text-decoration: none;
-}
-
-div{
-    padding-top: 12px;
-}
-
+/**
+ * TMS – style.css
+ * Backward-compatible entrypoint. Imports shared global CSS.
+ */
+@import url('./global.css');

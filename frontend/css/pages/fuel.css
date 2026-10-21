@@ -1,0 +1,10 @@
+/**
+ * Fuel Page Styles – fuel.html
+ */
+
+#fuel-table th:last-child,
+#fuel-table td:last-child {
+    text-align: right;
+    white-space: nowrap;
+}
+

@@ -1,0 +1,134 @@
+/**
+ * User Management Page Styles – user-management.html
+ */
+
+/* --- Modal Dialog --- */
+.user-dialog {
+    width: min(720px, calc(100% - 32px));
+    max-height: min(90vh, 860px);
+    max-height: min(90dvh, 860px);
+    padding: 26px;
+    overflow-y: auto;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: var(--paper);
+    color: var(--ink);
+    box-shadow: var(--shadow-lg);
+}
+.user-dialog::backdrop {
+    background: rgba(13, 31, 55, 0.5);
+    backdrop-filter: blur(3px);
+}
+.user-dialog-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+.user-dialog-header .eyebrow {
+    margin: 0 0 4px;
+}
+.user-dialog-header h2 {
+    margin: 0;
+    color: var(--navy);
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+.user-dialog-note {
+    margin: -6px 0 18px;
+    color: var(--ink-soft);
+    font-size: 0.8rem;
+    line-height: 1.55;
+}
+.user-dialog-grid {
+    gap: 14px 12px;
+}
+.user-dialog-grid select {
+    width: 100%;
+    min-height: 38px;
+    padding: 0 10px;
+    border: 1px solid var(--line-med);
+    border-radius: var(--r-sm);
+    background: var(--paper);
+    color: var(--ink);
+}
+.user-dialog-grid select:disabled,
+.user-dialog-grid input[readonly] {
+    background: var(--surface);
+    color: var(--ink-soft);
+}
+.user-dialog-grid input[readonly] {
+    cursor: default;
+}
+.user-dialog-actions,
+.user-table-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.user-dialog-actions {
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+.user-table-actions .button {
+    min-height: 34px;
+    padding: 0 10px;
+    font-size: 0.78rem;
+}
+.user-dialog .form-message:empty {
+    display: none;
+}
+
+/* --- User Detail Panels --- */
+.detail-heading,
+.detail-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+.detail-heading {
+    margin-bottom: 12px;
+}
+.detail-heading .eyebrow {
+    margin-bottom: 4px;
+}
+.detail-heading h2,
+.user-detail-layout h2 {
+    margin: 0;
+}
+.detail-actions {
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+.detail-actions .button {
+    min-height: 36px;
+}
+.detail-actions .button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.user-detail-layout {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 2px 18px;
+    margin-top: 28px;
+}
+.user-detail-grid {
+    margin-top: 16px;
+}
+.user-detail-grid input[readonly] {
+    background: var(--surface);
+    color: var(--ink-soft);
+}
+
+@media (max-width: 620px) {
+    .user-detail-layout {
+        grid-template-columns: 1fr;
+    }
+}
+

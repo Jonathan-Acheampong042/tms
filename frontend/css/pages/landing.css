@@ -1,0 +1,235 @@
+/**
+ * Landing Page Styles – index.html
+ */
+
+.landing-main {
+    width: min(1160px, calc(100% - 48px));
+    margin: 0 auto;
+}
+
+/* --- Hero Section --- */
+.hero {
+    display: grid;
+    min-height: 490px;
+    grid-template-columns: minmax(0, 1.08fr) minmax(340px, 0.78fr);
+    align-items: center;
+    gap: clamp(40px, 8vw, 110px);
+    padding: 76px 0 82px;
+}
+.hero-copy {
+    max-width: 610px;
+}
+.hero h1 {
+    max-width: 640px;
+    margin: 0;
+    color: var(--navy);
+    font-size: clamp(2.7rem, 5vw, 4rem);
+    font-weight: 700;
+    letter-spacing: -0.05em;
+    line-height: 1.08;
+}
+.hero h1 span {
+    color: var(--coral);
+}
+.hero-description {
+    max-width: 540px;
+    margin: 20px 0 26px;
+    color: var(--ink-soft);
+    font-size: 1.0625rem;
+    line-height: 1.75;
+}
+.hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+/* --- System Index Box --- */
+.system-index {
+    padding: 24px 0 0 24px;
+    border-top: 2px solid var(--navy);
+    border-left: 1px solid var(--line);
+}
+.system-index h2 {
+    margin: 0 0 16px;
+    color: var(--navy);
+    font-size: 1rem;
+    font-weight: 700;
+}
+.system-index dl {
+    display: grid;
+    gap: 0;
+    margin: 0;
+}
+.system-area {
+    padding: 12px 0 14px 12px;
+    border-top: 1px solid var(--line);
+    border-left: 3px solid var(--area-color);
+}
+.system-area-fleet      { --area-color: var(--blue); }
+.system-area-operations { --area-color: var(--orange); }
+.system-area-finance    { --area-color: var(--violet); }
+
+.system-area dt {
+    color: var(--ink);
+    font-size: 0.875rem;
+    font-weight: 700;
+}
+.system-area dd {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    margin: 6px 0 0;
+}
+
+.area-item {
+    position: relative;
+    padding-left: 10px;
+    color: var(--ink-soft);
+    font-size: 0.78rem;
+    white-space: nowrap;
+}
+.area-item::before {
+    position: absolute;
+    top: 0.52em;
+    left: 0;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--area-color);
+    content: "";
+}
+
+.area-vehicles      { --area-color: var(--blue); }
+.area-drivers       { --area-color: var(--brand); }
+.area-maintenance   { --area-color: var(--amber); }
+.area-fuel          { --area-color: var(--orange); }
+.area-routes        { --area-color: var(--green); }
+.area-trips         { --area-color: var(--sky); }
+.area-incidents     { --area-color: var(--coral); }
+.area-bookings      { --area-color: var(--violet); }
+.area-invoices      { --area-color: var(--orange); }
+.area-payments      { --area-color: var(--green); }
+.area-notifications { --area-color: var(--sky); }
+.area-reports       { --area-color: var(--blue); }
+.area-audit         { --area-color: var(--coral); }
+
+.system-index > p {
+    margin: 16px 0 0;
+    color: var(--ink-faint);
+    font-size: 0.78rem;
+}
+
+/* --- Workflow Section --- */
+.workflow-section {
+    padding: 42px 0 54px;
+    border-top: 1px solid var(--line);
+}
+.features-inner {
+    width: min(1160px, 100%);
+    margin: 0 auto;
+}
+.workflow-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 32px;
+    margin-bottom: 24px;
+}
+.workflow-heading .eyebrow {
+    flex: 0 0 auto;
+    margin: 0;
+}
+.workflow-heading h2 {
+    max-width: 680px;
+    margin: 0;
+    color: var(--navy);
+    font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.25;
+}
+
+.workflow-steps {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-top: 1px solid var(--line);
+}
+.workflow-steps article {
+    min-height: 150px;
+    padding: 20px 24px 0 0;
+}
+.workflow-steps article + article {
+    padding-left: 24px;
+    border-left: 1px solid var(--line);
+}
+.workflow-number {
+    color: var(--coral);
+    font-size: 0.76rem;
+    font-weight: 750;
+    letter-spacing: 0.06em;
+}
+.workflow-steps h3 {
+    margin: 7px 0 5px;
+    color: var(--navy);
+    font-size: 1rem;
+    font-weight: 700;
+}
+.workflow-steps p {
+    max-width: 340px;
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 0.875rem;
+    line-height: 1.65;
+}
+
+/* --- Responsive Overrides --- */
+@media (max-width: 768px) {
+    .landing-main {
+        width: min(100% - 36px, 580px);
+    }
+    .hero {
+        grid-template-columns: 1fr;
+        gap: 36px;
+        padding: 50px 0 44px;
+    }
+    .hero h1 {
+        font-size: clamp(2.3rem, 10vw, 3.2rem);
+    }
+    .hero-description {
+        margin: 16px 0 20px;
+        font-size: 0.9375rem;
+    }
+    .hero-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+    .system-index {
+        padding: 18px 0 0 16px;
+    }
+    .workflow-section {
+        padding: 28px 0 36px;
+    }
+    .workflow-heading {
+        display: block;
+        margin-bottom: 18px;
+    }
+    .workflow-heading .eyebrow {
+        margin-bottom: 6px;
+    }
+    .workflow-steps {
+        grid-template-columns: 1fr;
+    }
+    .workflow-steps article,
+    .workflow-steps article + article {
+        min-height: auto;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--line);
+        border-left: 0;
+    }
+    .workflow-steps h3 {
+        margin-top: 4px;
+    }
+}
+

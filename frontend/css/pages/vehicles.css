@@ -1,0 +1,10 @@
+/**
+ * Vehicles Page Styles – vehicles.html
+ */
+
+#vehicles-table th:last-child,
+#vehicles-table td:last-child {
+    text-align: right;
+    white-space: nowrap;
+}
+

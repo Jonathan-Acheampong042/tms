@@ -3,58 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f4f7f6">
+    <meta name="description" content="A clearer way to coordinate vehicles, drivers, trips, bookings, and billing.">
     <title>Transport Management System</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/pages/landing.css">
 </head>
 <body>
-    <header>
-        <nav>
-            <a href="index.html" class="brand">TMS</a>
-            <ul>
-                <li><a href="pages/dashboard.html">Dashboard</a></li>
-                <li><a href="pages/vehicles.html">Vehicles</a></li>
-                <li><a href="pages/drivers.html">Drivers</a></li>
-                <li><a href="pages/trips.html">Trips</a></li>
-                <li><a href="pages/bookings.html">Bookings</a></li>
-                <li><a href="pages/fuel.html">Fuel</a></li>
-                <li><a href="pages/billing.html">Billing</a></li>
-                <li><a href="pages/notifications.html">Notifications</a></li>
-                <li><a href="pages/reports.html">Reports</a></li>
-            </ul>
-            <div class="auth-links">
-                <a href="pages/login.html" id="login-link">Sign In</a>
-                <a href="pages/signup.html" id="signup-link">Sign Up</a>
+    <header class="site-header">
+        <nav class="site-nav" aria-label="Main navigation">
+            <a href="index.html" class="brand" aria-label="Transport Management System home">
+                <span>TRANSPORT MANAGEMENT<br>SYSTEM</span>
+            </a>
+            <div class="site-nav-links">
+                <a href="#system-areas">System areas</a>
+                <a href="#workflow">Workflow</a>
+            </div>
+            <div class="site-nav-actions">
+                <a href="pages/login.html">Sign in</a>
+                <a href="pages/signup.html" class="button">Sign Up</a>
             </div>
         </nav>
     </header>
 
-    <main>
-        <section class="hero">
-            <h1>Transport Management System</h1>
-            <p>Manage your fleet, drivers, trips, and bookings in one place.</p>
-            <a href="pages/signup.html" class="btn">Get Started</a>
+    <main class="landing-main">
+        <section class="hero" id="system-areas">
+            <div class="hero-copy">
+                <p class="eyebrow">TRANSPORT MANAGEMENT SYSTEM <span>/ OPERATIONS</span></p>
+                <h1>Manage vehicles, trips and bookings.</h1>
+                <p class="hero-description">
+                    Manage vehicles and drivers, plan routes, record trips and bookings,
+                    and keep maintenance and billing records connected.
+                </p>
+                <div class="hero-actions">
+                    <a href="pages/signup.html" class="button">Create customer account</a>
+                    <a href="pages/login.html" class="button button-secondary">Sign in</a>
+                </div>
+            </div>
+
+            <section class="system-index" aria-labelledby="system-index-heading">
+                <h2 id="system-index-heading">System areas</h2>
+                <dl>
+                    <div class="system-area system-area-fleet">
+                        <dt>Fleet</dt>
+                        <dd>
+                            <span class="area-item area-vehicles">Vehicles</span>
+                            <span class="area-item area-drivers">Drivers</span>
+                            <span class="area-item area-maintenance">Maintenance</span>
+                            <span class="area-item area-fuel">Fuel</span>
+                        </dd>
+                    </div>
+                    <div class="system-area system-area-operations">
+                        <dt>Operations</dt>
+                        <dd>
+                            <span class="area-item area-routes">Routes</span>
+                            <span class="area-item area-trips">Trips</span>
+                            <span class="area-item area-incidents">Incidents</span>
+                            <span class="area-item area-bookings">Bookings</span>
+                        </dd>
+                    </div>
+                    <div class="system-area system-area-finance">
+                        <dt>Finance &amp; oversight</dt>
+                        <dd>
+                            <span class="area-item area-invoices">Invoices</span>
+                            <span class="area-item area-payments">Payments</span>
+                            <span class="area-item area-notifications">Notifications</span>
+                            <span class="area-item area-reports">Reports</span>
+                            <span class="area-item area-audit">Audit logs</span>
+                        </dd>
+                    </div>
+                </dl>
+            </section>
         </section>
 
-        <section class="features">
-            <div class="feature-card">
-                <h2>Fleet</h2>
-                <p>Track vehicles, maintenance, and fuel records.</p>
-            </div>
-            <div class="feature-card">
-                <h2>Trips</h2>
-                <p>Schedule and monitor trips with live status.</p>
-            </div>
-            <div class="feature-card">
-                <h2>Billing</h2>
-                <p>Invoices and payments, all in one dashboard.</p>
+        <section class="workflow-section" id="workflow">
+            <div class="features-inner">
+                <div class="workflow-heading">
+                    <p class="eyebrow">WORKFLOW</p>
+                    <h2>From vehicle assignment to payment records.</h2>
+                </div>
+                <div class="workflow-steps">
+                    <article>
+                        <span class="workflow-number">01</span>
+                        <h3>Prepare</h3>
+                        <p>Maintain vehicle and driver details, route templates, fuel, and service records.</p>
+                    </article>
+                    <article>
+                        <span class="workflow-number">02</span>
+                        <h3>Operate</h3>
+                        <p>Manage trips and bookings, then record incidents and operational updates.</p>
+                    </article>
+                    <article>
+                        <span class="workflow-number">03</span>
+                        <h3>Reconcile</h3>
+                        <p>Keep invoices, payments, reports, and audit history with the operation.</p>
+                    </article>
+                </div>
             </div>
         </section>
     </main>
 
-    <footer>
-        <p>&copy; 2026 Transport Management System</p>
+    <footer class="site-footer">
+        <p>&copy; 2026 Transport Management System.</p>
     </footer>
-
-    <script src="js/auth.js"></script>
 </body>
 </html>

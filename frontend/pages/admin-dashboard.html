@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f4f7f6">
+    <title>Administrator home | Transport Management System</title>
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/pages/admin-dashboard.css">
+</head>
+<body class="role-layout">
+    <button class="role-menu-toggle" type="button" aria-controls="role-sidebar" aria-expanded="false" aria-label="Open navigation">
+        <span></span><span></span><span></span>
+    </button>
+    <button class="role-sidebar-backdrop" type="button" aria-label="Dismiss navigation overlay" hidden></button>
+    <aside class="role-sidebar" id="role-sidebar">
+        <a href="admin-dashboard.html" class="brand"><span>TRANSPORT MANAGEMENT SYSTEM</span></a>
+        <p class="role-nav-label">Administrator</p>
+        <nav class="role-nav" aria-label="Administrator navigation" data-role-pages></nav>
+        <a class="role-profile-link" href="profile.html">Profile</a>
+        <button class="role-logout" type="button" data-logout>Log out</button>
+    </aside>
+    <main class="role-home">
+        <header class="role-home-header">
+            <p class="eyebrow">ADMINISTRATOR WORKSPACE</p>
+            <h1>Transport operations overview.</h1>
+            <p>Review current system summaries and open an operational area.</p>
+        </header>
+        <section class="stats-grid role-admin-stats" aria-label="Operations summary">
+            <div class="stat-card"><h2>Total Vehicles</h2><p class="stat-value" id="stat-vehicles">--</p></div>
+            <div class="stat-card"><h2>Active Trips</h2><p class="stat-value" id="stat-trips">--</p></div>
+            <div class="stat-card"><h2>Pending Bookings</h2><p class="stat-value" id="stat-bookings">--</p></div>
+            <div class="stat-card"><h2>Unpaid Invoices</h2><p class="stat-value" id="stat-invoices">--</p></div>
+        </section>
+        <section class="role-home-section" aria-labelledby="admin-tools-heading">
+            <h2 id="admin-tools-heading">Operational areas</h2>
+            <div class="role-link-grid">
+                <a class="role-link-card" href="user-management.html"><strong>User management</strong><span>Review account profiles and roles.</span></a>
+                <a class="role-link-card" href="vehicles.html"><strong>Vehicles</strong><span>Fleet records and availability.</span></a>
+                <a class="role-link-card" href="drivers.html"><strong>Drivers</strong><span>Driver records and assignments.</span></a>
+                <a class="role-link-card" href="trips.html"><strong>Trips</strong><span>Schedules and trip status.</span></a>
+                <a class="role-link-card" href="bookings.html"><strong>Bookings</strong><span>Customer transport requests.</span></a>
+                <a class="role-link-card" href="reports.html"><strong>Reports</strong><span>System-wide operational summaries.</span></a>
+                <a class="role-link-card" href="notifications.html"><strong>Notifications</strong><span>System updates.</span></a>
+            </div>
+        </section>
+        <section class="panel role-home-section">
+            <h2>Recent activity</h2>
+            <ul id="recent-activity"><li>Loading...</li></ul>
+        </section>
+    </main>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/dashboard.js"></script>
+    <script src="../js/role-nav.js"></script>
+</body>
+</html>

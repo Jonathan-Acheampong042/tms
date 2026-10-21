@@ -1,18 +1,13 @@
 const express = require('express');
-const crud = require('../utils/crud');
+const db = require('../db');
 const handleDbError = require('../utils/dbError');
 
 const router = express.Router();
-const SCHEMA = 'fleet';
-const TABLE = 'vehicles';
-
-// The table's columns, defaults and constraints live in the database
-// (database/02_fleet.sql). This file does not repeat them: utils/crud.js
-// reads the column names from the database itself.
 
 router.get('/', async (req, res) => {
   try {
-    return res.json(await crud.findAll(SCHEMA, TABLE));
+    const { rows } = await db.query('SELECT * FROM fleet.list_vehicles()');
+    return res.json(rows);
   } catch (error) {
     return handleDbError(error, res);
   }
@@ -20,9 +15,14 @@ router.get('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
   try {
-    const row = await crud.findById(SCHEMA, TABLE, req.params.id);
-    if (!row) return res.status(404).json({ message: 'Vehicle not found.' });
-    return res.json(row);
+    const { rows } = await db.query(
+      'SELECT * FROM fleet.get_vehicle($1::uuid)',
+      [req.params.id]
+    );
+    if (rows.length === 0) {
+      return res.status(404).json({ message: 'Vehicle not found.' });
+    }
+    return res.json(rows[0]);
   } catch (error) {
     return handleDbError(error, res);
   }
@@ -30,18 +30,26 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
   try {
-    return res.status(201).json(await crud.insert(SCHEMA, TABLE, req.body));
+    const { rows } = await db.query(
+      'SELECT * FROM fleet.create_vehicle($1::jsonb)',
+      [JSON.stringify(req.body ?? {})]
+    );
+    return res.status(201).json(rows[0]);
   } catch (error) {
     return handleDbError(error, res);
   }
 });
 
-// PATCH updates only the fields that are sent.
 router.patch('/:id', async (req, res) => {
   try {
-    const row = await crud.update(SCHEMA, TABLE, req.params.id, req.body);
-    if (!row) return res.status(404).json({ message: 'Vehicle not found.' });
-    return res.json(row);
+    const { rows } = await db.query(
+      'SELECT * FROM fleet.update_vehicle($1::uuid, $2::jsonb)',
+      [req.params.id, JSON.stringify(req.body ?? {})]
+    );
+    if (rows.length === 0) {
+      return res.status(404).json({ message: 'Vehicle not found.' });
+    }
+    return res.json(rows[0]);
   } catch (error) {
     return handleDbError(error, res);
   }
@@ -49,8 +57,13 @@ router.patch('/:id', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
   try {
-    const deleted = await crud.remove(SCHEMA, TABLE, req.params.id);
-    if (!deleted) return res.status(404).json({ message: 'Vehicle not found.' });
+    const { rows } = await db.query(
+      'SELECT * FROM fleet.delete_vehicle($1::uuid)',
+      [req.params.id]
+    );
+    if (rows.length === 0) {
+      return res.status(404).json({ message: 'Vehicle not found.' });
+    }
     return res.status(204).send();
   } catch (error) {
     return handleDbError(error, res);

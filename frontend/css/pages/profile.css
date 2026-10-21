@@ -1,0 +1,35 @@
+/**
+ * Profile Page Styles – profile.html
+ */
+
+.profile-page {
+    max-width: 840px;
+}
+
+.profile-card {
+    max-width: 680px;
+    margin-top: 28px;
+    padding: 28px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: var(--paper);
+    box-shadow: var(--shadow-xs);
+}
+
+.profile-card h2 {
+    margin: 0 0 18px;
+    color: var(--navy);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.profile-card input[readonly] {
+    background: var(--surface);
+    color: var(--ink-soft);
+    cursor: default;
+}
+
+.profile-card .auth-submit {
+    max-width: 200px;
+}
+

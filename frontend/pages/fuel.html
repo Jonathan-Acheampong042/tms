@@ -3,53 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fuel - TMS</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <meta name="theme-color" content="#f4f7f6">
+    <title>Fuel records | Transport Management System</title>
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/pages/fuel.css">
 </head>
-<body>
-    <header>
-        <nav>
-            <a href="../index.html" class="brand">TMS</a>
-            <ul>
-                <li><a href="dashboard.html">Dashboard</a></li>
-                <li><a href="vehicles.html">Vehicles</a></li>
-                <li><a href="drivers.html">Drivers</a></li>
-                <li><a href="trips.html">Trips</a></li>
-                <li><a href="bookings.html">Bookings</a></li>
-                <li><a href="fuel.html">Fuel</a></li>
-                <li><a href="billing.html">Billing</a></li>
-                <li><a href="notifications.html">Notifications</a></li>
-                <li><a href="reports.html">Reports</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <main>
-        <div class="page-header">
-            <h1>Fuel Records</h1>
-            <button class="btn" id="add-fuel-btn">Add Record</button>
+<body class="role-layout">
+    <button class="role-menu-toggle" type="button" aria-controls="role-sidebar" aria-expanded="false" aria-label="Open navigation"><span></span><span></span><span></span></button>
+    <button class="role-sidebar-backdrop" type="button" aria-label="Dismiss navigation overlay" hidden></button>
+    <aside class="role-sidebar" id="role-sidebar">
+        <a href="admin-dashboard.html" class="brand"><span>TRANSPORT MANAGEMENT SYSTEM</span></a>
+        <p class="role-nav-label" data-profile-role>Account</p>
+        <nav class="role-nav" aria-label="Role navigation" data-role-pages></nav>
+        <a class="role-profile-link" href="profile.html">Profile</a>
+        <button class="role-logout" type="button" data-logout>Log out</button>
+    </aside>
+    <main class="role-home workspace-main">
+        <header class="role-home-header">
+            <p class="eyebrow">FLEET</p>
+            <h1>Fuel records</h1>
+            <p>Review vehicle refuelling records, quantities, costs, and dates.</p>
+        </header>
+        <div class="workspace-toolbar">
+            <p>Fuel record layout</p>
+            <button class="button" type="button">Add record</button>
         </div>
-
-        <section class="panel">
-            <table id="fuel-table">
-                <thead>
-                    <tr>
-                        <th>Vehicle</th>
-                        <th>Litres</th>
-                        <th>Cost</th>
-                        <th>Station</th>
-                        <th>Date</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td colspan="6">Loading...</td></tr>
-                </tbody>
-            </table>
+        <section class="panel workspace-panel" aria-label="Fuel records">
+            <div class="table-scroll">
+                <table id="fuel-table">
+                    <thead><tr><th>Vehicle</th><th>Litres</th><th>Cost</th><th>Station</th><th>Date</th><th>View / Edit</th></tr></thead>
+                    <tbody><tr><td colspan="6" class="workspace-empty">Fuel records will appear here once page behavior is implemented.</td></tr></tbody>
+                </table>
+            </div>
         </section>
+        <p class="workspace-note">This page is a layout preview. Fuel record viewing and editing are not connected.</p>
     </main>
-
-    <script src="../js/api.js"></script>
-    <script src="../js/fuel.js"></script>
+    <script src="../js/role-nav.js"></script>
 </body>
 </html>

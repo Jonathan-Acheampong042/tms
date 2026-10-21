@@ -1,0 +1,140 @@
+/**
+ * Dashboard Pages Styles – admin-dashboard.html, customer-dashboard.html,
+ * driver-dashboard.html & dashboard.html
+ */
+
+/* --- Stats Grid & Cards --- */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 16px;
+    margin: 24px 0 32px;
+}
+.stat-card {
+    padding: 22px 20px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-xs);
+    transition: box-shadow 200ms, transform 200ms;
+}
+.stat-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+.stat-card h2 {
+    margin: 0 0 8px;
+    color: var(--ink-soft);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+.stat-value {
+    margin: 0;
+    color: var(--navy);
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+}
+
+.role-admin-stats {
+    margin-top: 28px;
+}
+
+/* --- Operational Area Cards & Link Grid --- */
+.role-home-section {
+    margin-top: 32px;
+}
+.role-home-section h2 {
+    margin: 0 0 14px;
+    color: var(--navy);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.role-link-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+.role-link-card {
+    display: flex;
+    min-height: 118px;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 18px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: var(--paper);
+    color: var(--ink);
+    box-shadow: var(--shadow-xs);
+    transition: border-color 160ms, box-shadow 160ms, transform 160ms;
+    text-decoration: none;
+}
+.role-link-card strong {
+    color: var(--navy);
+    font-size: 0.9375rem;
+    font-weight: 600;
+}
+.role-link-card span {
+    margin-top: 8px;
+    color: var(--ink-soft);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+}
+.role-link-card:hover {
+    border-color: var(--brand);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+    color: var(--ink);
+}
+.role-link-card:active {
+    transform: translateY(0);
+}
+
+.role-home-notice {
+    max-width: 720px;
+    margin: 24px 0 0;
+    padding: 12px 16px;
+    border-left: 3px solid var(--amber);
+    border-radius: 0 var(--r-sm) var(--r-sm) 0;
+    background: #fffbeb;
+    color: #78350f;
+    font-size: 0.8125rem;
+    line-height: 1.6;
+}
+
+#recent-activity {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+#recent-activity li {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.875rem;
+    color: var(--ink-soft);
+}
+#recent-activity li:last-child {
+    border-bottom: none;
+}
+
+/* --- Responsive Overrides --- */
+@media (max-width: 900px) {
+    .role-link-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 620px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    .role-link-grid {
+        grid-template-columns: 1fr;
+    }
+}
+

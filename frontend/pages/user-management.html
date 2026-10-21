@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f4f7f6">
+    <title>User management | Transport Management System</title>
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/pages/user-management.css">
+</head>
+<body class="role-layout">
+    <button class="role-menu-toggle" type="button" aria-controls="role-sidebar" aria-expanded="false" aria-label="Open navigation"><span></span><span></span><span></span></button>
+    <button class="role-sidebar-backdrop" type="button" aria-label="Dismiss navigation overlay" hidden></button>
+    <aside class="role-sidebar" id="role-sidebar">
+        <a href="admin-dashboard.html" class="brand"><span>TRANSPORT MANAGEMENT SYSTEM</span></a>
+        <p class="role-nav-label" data-profile-role>Account</p>
+        <nav class="role-nav" aria-label="Role navigation" data-role-pages></nav>
+        <a class="role-profile-link" href="profile.html">Profile</a>
+        <button class="role-logout" type="button" data-logout>Log out</button>
+    </aside>
+    <main class="role-home workspace-main">
+        <header class="role-home-header">
+            <p class="eyebrow">ADMINISTRATION</p>
+            <h1>User management</h1>
+            <p>Review account records and permitted profile information.</p>
+        </header>
+        <div class="workspace-toolbar">
+            <p id="user-list-status" role="status" aria-live="polite">Loading user records…</p>
+            <button class="button" type="button" disabled title="User creation is not available on this page yet">Add user</button>
+        </div>
+        <section class="panel workspace-panel" aria-label="User accounts">
+            <div class="table-scroll">
+                <table id="user-table">
+                    <thead>
+                        <tr><th>Name</th><th>Username</th><th>Email</th><th>Role</th><th>Status</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody>
+                                            <tr class="skeleton-row"><td colspan="6"><div class="skeleton-loader"></div></td></tr>
+                                            <tr class="skeleton-row"><td colspan="6"><div class="skeleton-loader"></div></td></tr>
+                                            <tr class="skeleton-row"><td colspan="6"><div class="skeleton-loader"></div></td></tr>
+                                            <tr class="skeleton-row"><td colspan="6"><div class="skeleton-loader"></div></td></tr>
+                                            <tr class="skeleton-row"><td colspan="6"><div class="skeleton-loader"></div></td></tr>
+                                        </tbody>
+                </table>
+            </div>
+        </section>
+        <p id="user-load-error" class="form-message" role="alert"></p>
+    </main>
+    <dialog id="user-dialog" class="user-dialog" aria-labelledby="user-dialog-title">
+        <form id="user-dialog-form">
+            <div class="user-dialog-header">
+                <div>
+                    <p id="user-dialog-eyebrow" class="eyebrow">USER DETAILS</p>
+                    <h2 id="user-dialog-title">User account</h2>
+                </div>
+                <button id="user-dialog-close" class="icon-button" type="button" aria-label="Close dialog">×</button>
+            </div>
+            <p class="user-dialog-note">Role changes are disabled until administrative updates are protected by server-side authentication.</p>
+            <div class="form-grid user-dialog-grid">
+                            <div class="form-field"><label for="user-role">Role</label><select id="user-role" name="role" required><option value="customer">Customer</option><option value="driver">Driver</option><option value="admin">Administrator</option></select></div>
+                            <div class="form-field"><label for="user-username">Username</label><input id="user-username" name="username" readonly></div>
+                            <div class="form-field"><label for="user-email">Email</label><input id="user-email" name="email" type="email" readonly></div>
+                            <div class="form-field"><label for="user-status">Account status</label><input id="user-status" name="is_active" readonly></div>
+                            <div class="form-field"><label for="user-created">Created</label><input id="user-created" name="created_at" readonly></div>
+                            <div class="form-field"><label for="edit-first-name">First name</label><input id="edit-first-name" name="first_name" required></div>
+                            <div class="form-field"><label for="edit-middle-name">Middle name</label><input id="edit-middle-name" name="middle_name"></div>
+                            <div class="form-field"><label for="edit-last-name">Last name</label><input id="edit-last-name" name="last_name" required></div>
+                            <div class="form-field"><label for="edit-phone">Phone</label><input id="edit-phone" name="phone" type="tel"></div>
+                            <div class="form-field form-field-full"><label for="edit-address">Address</label><input id="edit-address" name="address"></div>
+                        </div>
+            <p id="user-dialog-message" class="form-message" role="status" aria-live="polite"></p>
+            <div class="user-dialog-actions">
+                <button id="user-dialog-cancel" class="button button-secondary" type="button">Close</button>
+                <button id="user-dialog-edit" class="button button-secondary" type="button">Edit</button>
+                <button id="user-dialog-save" class="button" type="submit" hidden>Save changes</button>
+            </div>
+        </form>
+    </dialog>
+    <script src="../js/api.js"></script>
+    <script src="../js/role-nav.js"></script>
+    <script src="../js/user-management.js"></script>
+</body>
+</html>

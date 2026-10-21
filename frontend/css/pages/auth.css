@@ -1,0 +1,137 @@
+/**
+ * Auth Pages Styles – login.html & signup.html
+ */
+
+.auth-nav-prompt {
+    color: var(--ink-soft);
+    font-size: 0.875rem;
+}
+
+.auth-page {
+    display: grid;
+    width: min(1040px, calc(100% - 48px));
+    min-height: 620px;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
+    align-items: start;
+    gap: clamp(48px, 9vw, 120px);
+    margin: 0 auto;
+    padding: 80px 0 100px;
+}
+
+.auth-aside {
+    padding-top: 10px;
+}
+.auth-aside-copy {
+    max-width: 390px;
+}
+.auth-aside-copy .eyebrow {
+    margin-bottom: 16px;
+}
+.auth-aside h1 {
+    margin: 0;
+    color: var(--navy);
+    font-size: clamp(2rem, 3.5vw, 2.8rem);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 1.15;
+}
+.auth-aside-copy > p:last-child {
+    max-width: 360px;
+    margin: 14px 0 0;
+    color: var(--ink-soft);
+    font-size: 0.9375rem;
+    line-height: 1.7;
+}
+
+.auth-content {
+    width: 100%;
+    padding: 28px 0 0 32px;
+    border-top: 2px solid var(--brand);
+    border-left: 1px solid var(--line);
+}
+
+.auth-card {
+    width: min(460px, 100%);
+}
+.auth-card h2 {
+    margin: 0;
+    color: var(--navy);
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+}
+.auth-intro {
+    margin: 6px 0 22px;
+    color: var(--ink-soft);
+    font-size: 0.875rem;
+}
+.auth-submit {
+    width: 100%;
+    margin-top: 16px;
+    min-height: 42px;
+}
+.auth-footer {
+    margin: 16px 0 0;
+    color: var(--ink-soft);
+    font-size: 0.85rem;
+}
+.auth-footer a {
+    font-weight: 600;
+}
+
+.account-boundary {
+    margin: 20px 0 0;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    color: var(--ink-soft);
+    font-size: 0.77rem;
+    line-height: 1.55;
+}
+
+.driver-fields {
+    padding-top: 2px;
+}
+.driver-fields-intro {
+    margin: 0 0 10px;
+    color: var(--ink-soft);
+    font-size: 0.84rem;
+}
+
+/* --- Responsive Overrides --- */
+@media (max-width: 900px) {
+    .auth-page {
+        width: min(700px, calc(100% - 36px));
+        grid-template-columns: minmax(0, 0.78fr) minmax(0, 1fr);
+        gap: 38px;
+        padding-top: 60px;
+    }
+    .auth-content {
+        padding-left: 22px;
+    }
+}
+
+@media (max-width: 620px) {
+    .auth-nav-prompt {
+        display: none;
+    }
+    .auth-page {
+        display: flex;
+        width: min(100% - 36px, 480px);
+        min-height: auto;
+        flex-direction: column;
+        gap: 26px;
+        padding: 42px 0 60px;
+    }
+    .auth-aside {
+        padding: 0;
+    }
+    .auth-aside h1 {
+        max-width: 420px;
+        font-size: 2rem;
+    }
+    .auth-content {
+        padding: 20px 0 0;
+        border-left: 0;
+    }
+}
+

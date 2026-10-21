@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f4f7f6">
+    <title>Your profile | Transport Management System</title>
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/pages/profile.css">
+</head>
+<body class="role-layout">
+    <button class="role-menu-toggle" type="button" aria-controls="role-sidebar" aria-expanded="false" aria-label="Open navigation">
+        <span></span><span></span><span></span>
+    </button>
+    <button class="role-sidebar-backdrop" type="button" aria-label="Dismiss navigation overlay" hidden></button>
+    <aside class="role-sidebar" id="role-sidebar">
+        <a href="customer-dashboard.html" class="brand"><span>TRANSPORT MANAGEMENT SYSTEM</span></a>
+        <p class="role-nav-label" data-profile-role>Account</p>
+        <nav class="role-nav" aria-label="Account navigation" data-role-pages></nav>
+        <a class="role-profile-link" href="profile.html">Profile</a>
+        <button class="role-logout" type="button" data-logout>Log out</button>
+    </aside>
+    <main class="role-home profile-page">
+        <header class="role-home-header">
+            <p class="eyebrow">ACCOUNT SETTINGS</p>
+            <h1>Your profile</h1>
+            <p>View your account details and update your contact information.</p>
+        </header>
+        <section class="profile-card" aria-labelledby="profile-form-heading">
+            <h2 id="profile-form-heading">Personal information</h2>
+            <form id="profile-form">
+                <div class="form-grid">
+                                    <div class="form-field">
+                                        <label for="profile-first-name">First name</label>
+                                        <input id="profile-first-name" name="first_name" autocomplete="given-name" required>
+                                    </div>
+                                    <div class="form-field">
+                                        <label for="profile-middle-name">Middle name <span>(optional)</span></label>
+                                        <input id="profile-middle-name" name="middle_name" autocomplete="additional-name">
+                                    </div>
+                                    <div class="form-field">
+                                        <label for="profile-last-name">Last name</label>
+                                        <input id="profile-last-name" name="last_name" autocomplete="family-name" required>
+                                    </div>
+                                    <div class="form-field">
+                                        <label for="profile-username">Username</label>
+                                        <input id="profile-username" name="username" readonly>
+                                    </div>
+                                    <div class="form-field">
+                                        <label for="profile-email">Email</label>
+                                        <input id="profile-email" name="email" type="email" readonly>
+                                    </div>
+                                    <div class="form-field">
+                                        <label for="profile-role">Role</label>
+                                        <input id="profile-role" name="role" readonly>
+                                    </div>
+                                    <div class="form-field">
+                                        <label for="profile-license">License Number</label>
+                                        <input id="profile-license" name="license" readonly>
+                                    </div>
+                                    <div class="form-field">
+                                        <label for="profile-status">Account Status</label>
+                                        <input id="profile-status" name="is_active" readonly>
+                                    </div>
+                                    <div class="form-field">
+                                        <label for="profile-created">Created Date</label>
+                                        <input id="profile-created" name="created_at" readonly>
+                                    </div>
+                                    <div class="form-field">
+                                        <label for="profile-phone">Phone <span>(optional)</span></label>
+                                        <input id="profile-phone" name="phone" type="tel" autocomplete="tel">
+                                    </div>
+                                    <div class="form-field form-field-full">
+                                        <label for="profile-address">Address <span>(optional)</span></label>
+                                        <input id="profile-address" name="address" autocomplete="street-address">
+                                    </div>
+                                </div>
+                <p id="profile-message" class="form-message" role="status" aria-live="polite">Loading profile…</p>
+                <button class="button auth-submit" type="submit" disabled>Save changes</button>
+            </form>
+        </section>
+    </main>
+    <script src="../js/api.js"></script>
+    <script src="../js/role-nav.js"></script>
+    <script src="../js/profile.js"></script>
+</body>
+</html>

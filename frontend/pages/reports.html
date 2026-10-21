@@ -3,53 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reports - TMS</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <meta name="theme-color" content="#f4f7f6">
+    <title>Reports | Transport Management System</title>
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/pages/reports.css">
 </head>
-<body>
-    <header>
-        <nav>
-            <a href="../index.html" class="brand">TMS</a>
-            <ul>
-                <li><a href="dashboard.html">Dashboard</a></li>
-                <li><a href="vehicles.html">Vehicles</a></li>
-                <li><a href="drivers.html">Drivers</a></li>
-                <li><a href="trips.html">Trips</a></li>
-                <li><a href="bookings.html">Bookings</a></li>
-                <li><a href="fuel.html">Fuel</a></li>
-                <li><a href="billing.html">Billing</a></li>
-                <li><a href="notifications.html">Notifications</a></li>
-                <li><a href="reports.html">Reports</a></li>
-            </ul>
+<body class="role-layout">
+    <button class="role-menu-toggle" type="button" aria-controls="role-sidebar" aria-expanded="false" aria-label="Open navigation"><span></span><span></span><span></span></button>
+    <button class="role-sidebar-backdrop" type="button" aria-label="Dismiss navigation overlay" hidden></button>
+    <aside class="role-sidebar" id="role-sidebar">
+        <a href="admin-dashboard.html" class="brand"><span>TRANSPORT MANAGEMENT SYSTEM</span></a>
+        <p class="role-nav-label" data-profile-role>Account</p>
+        <nav class="role-nav" aria-label="Role navigation" data-role-pages></nav>
+        <a class="role-profile-link" href="profile.html">Profile</a>
+        <button class="role-logout" type="button" data-logout>Log out</button>
+    </aside>
+    <main class="role-home workspace-main">
+        <header class="role-home-header">
+            <p class="eyebrow">OVERSIGHT & ANALYTICS</p>
+            <h1>Reports</h1>
+            <p>Review and export all-time operational summaries, status counts, metrics, bar charts, and performance analysis.</p>
+        </header>
+
+        <!-- Category navigation pills -->
+        <nav class="report-nav-bar" aria-label="Report category filter">
+            <button class="report-nav-pill active" type="button" data-category="all">
+                All Categories <span class="report-pill-badge" id="badge-all">6</span>
+            </button>
+            <button class="report-nav-pill" type="button" data-category="fleet">
+                Fleet <span class="report-pill-badge" id="badge-fleet">...</span>
+            </button>
+            <button class="report-nav-pill" type="button" data-category="trips">
+                Trips <span class="report-pill-badge" id="badge-trips">...</span>
+            </button>
+            <button class="report-nav-pill" type="button" data-category="bookings">
+                Bookings <span class="report-pill-badge" id="badge-bookings">...</span>
+            </button>
+            <button class="report-nav-pill" type="button" data-category="invoices">
+                Invoices <span class="report-pill-badge" id="badge-invoices">...</span>
+            </button>
+            <button class="report-nav-pill" type="button" data-category="payments">
+                Payments <span class="report-pill-badge" id="badge-payments">...</span>
+            </button>
+            <button class="report-nav-pill" type="button" data-category="revenue">
+                Revenue <span class="report-pill-badge" id="badge-revenue">GHS</span>
+            </button>
         </nav>
-    </header>
 
-    <main>
-        <h1>Reports</h1>
-
-        <section class="panel">
-            <h2>Fleet Summary</h2>
-            <div id="report-fleet" class="report-body">
-                <p>Loading...</p>
+        <div class="report-toolbar">
+            <p id="report-status" role="status" aria-live="polite">Loading reports…</p>
+            <div class="billing-exports" aria-label="Export summary report">
+                <button class="button button-secondary" type="button" data-report-export="csv">Download CSV</button>
+                <button class="button button-secondary" type="button" data-report-export="pdf">Download PDF</button>
             </div>
-        </section>
+        </div>
 
-        <section class="panel">
-            <h2>Trip Summary</h2>
-            <div id="report-trips" class="report-body">
-                <p>Loading...</p>
-            </div>
-        </section>
+        <!-- Dynamic Container for Category Views or Skeleton Loaders -->
+        <div class="report-container" id="report-container"></div>
 
-        <section class="panel">
-            <h2>Revenue Summary</h2>
-            <div id="report-revenue" class="report-body">
-                <p>Loading...</p>
-            </div>
-        </section>
+        <p class="workspace-note">This summary covers all records tracked by the Transport Management System. Exports use the current consolidated dataset.</p>
     </main>
-
     <script src="../js/api.js"></script>
+    <script src="../js/role-nav.js"></script>
     <script src="../js/reports.js"></script>
 </body>
 </html>
