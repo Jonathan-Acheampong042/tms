@@ -107,19 +107,72 @@
     line-height: 1.6;
 }
 
+/* --- Recent Activity Feed --- */
 #recent-activity {
     list-style: none;
     padding: 0;
     margin: 0;
 }
-#recent-activity li {
-    padding: 12px 0;
+
+.activity-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 0;
     border-bottom: 1px solid var(--line);
+}
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+.activity-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    margin-top: 1px;
+    color: var(--brand);
+    background: color-mix(in srgb, var(--brand) 10%, transparent);
+}
+.activity--add .activity-icon {
+    color: var(--teal);
+    background: color-mix(in srgb, var(--teal) 10%, transparent);
+}
+.activity--delete .activity-icon {
+    color: var(--red, #dc2626);
+    background: color-mix(in srgb, var(--red, #dc2626) 10%, transparent);
+}
+.activity--update .activity-icon {
+    color: var(--amber, #d97706);
+    background: color-mix(in srgb, var(--amber, #d97706) 10%, transparent);
+}
+
+.activity-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+.activity-desc {
+    font-size: 0.8375rem;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.4;
+}
+.activity-meta {
+    font-size: 0.75rem;
+    color: var(--ink-soft);
+    line-height: 1.4;
+}
+
+/* Fallback items (loading / empty / error) without activity-item class */
+#recent-activity li:not(.activity-item) {
+    padding: 12px 0;
     font-size: 0.875rem;
     color: var(--ink-soft);
-}
-#recent-activity li:last-child {
-    border-bottom: none;
 }
 
 /* --- Responsive Overrides --- */

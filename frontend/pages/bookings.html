@@ -12,7 +12,7 @@
     <button class="role-menu-toggle" type="button" aria-controls="role-sidebar" aria-expanded="false" aria-label="Open navigation"><span></span><span></span><span></span></button>
     <button class="role-sidebar-backdrop" type="button" aria-label="Dismiss navigation overlay" hidden></button>
     <aside class="role-sidebar" id="role-sidebar">
-        <a href="customer-dashboard.html" class="brand"><span>TRANSPORT MANAGEMENT SYSTEM</span></a>
+        <a href="admin-dashboard.html" class="brand"><span>TRANSPORT MANAGEMENT SYSTEM</span></a>
         <p class="role-nav-label" data-profile-role>Account</p>
         <nav class="role-nav" aria-label="Role navigation" data-role-pages></nav>
         <a class="role-profile-link" href="profile.html">Profile</a>
@@ -22,22 +22,104 @@
         <header class="role-home-header">
             <p class="eyebrow">CUSTOMER OPERATIONS</p>
             <h1>Bookings</h1>
-            <p>Review transport requests, pickup and drop-off details, and booking status.</p>
+            <p>Review transport requests, pickup and drop-off destinations, cargo specifications, and booking progress.</p>
         </header>
+
         <div class="workspace-toolbar">
-            <p>Booking record layout</p>
-            <button class="button" type="button">New booking</button>
+            <p id="bookings-count">Loading bookings…</p>
+            <button class="button" type="button" id="open-booking-modal-btn">+ New booking</button>
         </div>
+
         <section class="panel workspace-panel" aria-label="Booking records">
+            <div class="table-filters" style="display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
+                <div class="form-field" style="min-width: 220px; flex: 1;">
+                    <label for="booking-search">Search bookings</label>
+                    <input id="booking-search" type="search" placeholder="Filter by pickup or drop-off location…">
+                </div>
+                <div class="form-field" style="min-width: 140px;">
+                    <label for="booking-type-filter">Type</label>
+                    <select id="booking-type-filter">
+                        <option value="">All types</option>
+                        <option value="passenger">Passenger</option>
+                        <option value="cargo">Cargo</option>
+                    </select>
+                </div>
+                <div class="form-field" style="min-width: 160px;">
+                    <label for="booking-status-filter">Status</label>
+                    <select id="booking-status-filter">
+                        <option value="">All statuses</option>
+                        <option value="pending">Pending</option>
+                        <option value="allocated">Allocated</option>
+                        <option value="dispatched">Dispatched</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+            </div>
+
             <div class="table-scroll">
                 <table id="bookings-table">
-                    <thead><tr><th>Type</th><th>Pickup</th><th>Drop-off</th><th>Status</th><th>Created</th><th>View / Edit</th></tr></thead>
-                    <tbody><tr><td colspan="6" class="workspace-empty">Booking records will appear here once page behavior is implemented.</td></tr></tbody>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Pickup location</th>
+                            <th>Drop-off location</th>
+                            <th>Cargo / Specs</th>
+                            <th>Status</th>
+                            <th>Request date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="6" class="workspace-empty">Loading booking records…</td></tr>
+                    </tbody>
                 </table>
             </div>
         </section>
-        <p class="workspace-note">This page is a layout preview. Booking record viewing and editing are not connected.</p>
     </main>
+
+    <!-- Create Booking Modal -->
+    <dialog id="booking-modal" class="app-modal" aria-labelledby="booking-modal-title">
+        <form id="booking-form">
+            <div class="modal-header">
+                <div>
+                    <p class="eyebrow">TRANSPORT REQUEST</p>
+                    <h2 id="booking-modal-title">Create transport booking</h2>
+                </div>
+                <button id="booking-modal-close" class="icon-button" type="button" aria-label="Close dialog">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-field form-field-full">
+                        <label for="book-type">Service type</label>
+                        <select id="book-type" name="booking_type" required>
+                            <option value="passenger">Passenger transit</option>
+                            <option value="cargo">Cargo / Freight logistics</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="book-pickup">Pickup location</label>
+                        <input id="book-pickup" name="pickup" required placeholder="e.g. Accra Mall / Tema Port">
+                    </div>
+                    <div class="form-field">
+                        <label for="book-dropoff">Drop-off destination</label>
+                        <input id="book-dropoff" name="dropoff" required placeholder="e.g. Kumasi Kejetia / Takoradi">
+                    </div>
+                    <div class="form-field form-field-full" id="cargo-weight-field" hidden>
+                        <label for="book-weight">Cargo weight (kg) <span>(optional)</span></label>
+                        <input id="book-weight" name="weight" type="number" step="0.5" min="1" max="50000" placeholder="e.g. 250">
+                    </div>
+                </div>
+                <div id="booking-alert" class="alert alert-error" hidden style="margin-top: 14px;"></div>
+            </div>
+            <div class="modal-footer">
+                <button id="booking-modal-cancel" class="button button-secondary" type="button">Cancel</button>
+                <button id="booking-submit-btn" class="button" type="submit">Submit booking</button>
+            </div>
+        </form>
+    </dialog>
+
+    <script src="../js/api.js"></script>
     <script src="../js/role-nav.js"></script>
+    <script src="../js/bookings.js"></script>
 </body>
 </html>

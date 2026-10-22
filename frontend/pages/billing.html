@@ -46,6 +46,7 @@
                 <div class="billing-section-heading">
                     <h2>Invoices</h2>
                     <div class="billing-exports" aria-label="Export invoices">
+                        <button class="button" type="button" id="open-invoice-modal-btn">+ Create invoice</button>
                         <button class="button button-secondary" type="button" data-export-resource="invoices" data-export-format="csv">Download CSV</button>
                         <button class="button button-secondary" type="button" data-export-resource="invoices" data-export-format="pdf">Download PDF</button>
                     </div>
@@ -80,6 +81,7 @@
                 <div class="billing-section-heading">
                     <h2>Payments</h2>
                     <div class="billing-exports" aria-label="Export payments">
+                        <button class="button" type="button" id="open-payment-modal-btn">+ Record payment</button>
                         <button class="button button-secondary" type="button" data-export-resource="payments" data-export-format="csv">Download CSV</button>
                         <button class="button button-secondary" type="button" data-export-resource="payments" data-export-format="pdf">Download PDF</button>
                     </div>
@@ -109,6 +111,97 @@
 
         <p class="workspace-note">Exports include every record matching that section’s filters. CSV exports are limited to 10,000 records; PDF exports are limited to 500.</p>
     </main>
+
+    <!-- Create Invoice Modal -->
+    <dialog id="create-invoice-modal" class="app-modal" aria-labelledby="create-invoice-title">
+        <form id="create-invoice-form">
+            <div class="modal-header">
+                <div>
+                    <p class="eyebrow">NEW INVOICE</p>
+                    <h2 id="create-invoice-title">Create invoice</h2>
+                </div>
+                <button id="create-invoice-close" class="icon-button" type="button" aria-label="Close dialog">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label for="inv-number">Invoice number <span>(optional)</span></label>
+                        <input id="inv-number" name="invoice_number" placeholder="Leave empty for auto-generation">
+                    </div>
+                    <div class="form-field">
+                        <label for="inv-amount">Amount (GHS)</label>
+                        <input id="inv-amount" name="amount" type="number" step="0.01" min="1" required placeholder="e.g. 850.00">
+                    </div>
+                    <div class="form-field">
+                        <label for="inv-due-date">Due date</label>
+                        <input id="inv-due-date" name="due_date" type="date" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="inv-status">Status</label>
+                        <select id="inv-status" name="status">
+                            <option value="unpaid">Unpaid</option>
+                            <option value="paid">Paid</option>
+                            <option value="overdue">Overdue</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="invoice-alert" class="alert alert-error" hidden style="margin-top: 14px;"></div>
+            </div>
+            <div class="modal-footer">
+                <button id="create-invoice-cancel" class="button button-secondary" type="button">Cancel</button>
+                <button id="create-invoice-submit" class="button" type="submit">Create invoice</button>
+            </div>
+        </form>
+    </dialog>
+
+    <!-- Record Payment Modal -->
+    <dialog id="create-payment-modal" class="app-modal" aria-labelledby="create-payment-title">
+        <form id="create-payment-form">
+            <div class="modal-header">
+                <div>
+                    <p class="eyebrow">RECORD PAYMENT</p>
+                    <h2 id="create-payment-title">Record payment</h2>
+                </div>
+                <button id="create-payment-close" class="icon-button" type="button" aria-label="Close dialog">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-field form-field-full">
+                        <label for="pay-invoice-id">Invoice</label>
+                        <select id="pay-invoice-id" name="invoice_id" required>
+                            <option value="">Select invoice…</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="pay-amount">Amount paid (GHS)</label>
+                        <input id="pay-amount" name="amount" type="number" step="0.01" min="1" required placeholder="e.g. 500.00">
+                    </div>
+                    <div class="form-field">
+                        <label for="pay-method">Payment method</label>
+                        <select id="pay-method" name="method" required>
+                            <option value="mobile_money">Mobile Money (MTN/Telecel)</option>
+                            <option value="card">Credit / Debit Card</option>
+                            <option value="cash">Cash</option>
+                            <option value="bank_transfer">Bank Transfer</option>
+                        </select>
+                    </div>
+                    <div class="form-field form-field-full">
+                        <label for="pay-status">Payment status</label>
+                        <select id="pay-status" name="status" required>
+                            <option value="completed">Completed</option>
+                            <option value="pending">Pending</option>
+                            <option value="failed">Failed</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="payment-alert" class="alert alert-error" hidden style="margin-top: 14px;"></div>
+            </div>
+            <div class="modal-footer">
+                <button id="create-payment-cancel" class="button button-secondary" type="button">Cancel</button>
+                <button id="create-payment-submit" class="button" type="submit">Record payment</button>
+            </div>
+        </form>
+    </dialog>
     <script src="../js/api.js"></script>
     <script src="../js/role-nav.js"></script>
     <script src="../js/billing.js"></script>

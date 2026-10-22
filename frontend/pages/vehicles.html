@@ -20,24 +20,115 @@
     </aside>
     <main class="role-home workspace-main">
         <header class="role-home-header">
-            <p class="eyebrow">FLEET</p>
+            <p class="eyebrow">FLEET MANAGEMENT</p>
             <h1>Vehicles</h1>
-            <p>Review vehicle records and their current availability.</p>
+            <p>Review vehicle records, operational status, capacity, and insurance expiration dates.</p>
         </header>
+
         <div class="workspace-toolbar">
-            <p>Vehicle record layout</p>
-            <button class="button" type="button">Add vehicle</button>
+            <p id="vehicles-count">Loading vehicles…</p>
+            <button class="button" type="button" id="add-vehicle-btn">Add vehicle</button>
         </div>
+
         <section class="panel workspace-panel" aria-label="Vehicle records">
+            <div class="table-filters" style="display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
+                <div class="form-field" style="min-width: 220px; flex: 1;">
+                    <label for="vehicle-search">Search vehicles</label>
+                    <input id="vehicle-search" type="search" placeholder="Filter by plate number or model…">
+                </div>
+                <div class="form-field" style="min-width: 160px;">
+                    <label for="vehicle-status-filter">Status</label>
+                    <select id="vehicle-status-filter">
+                        <option value="">All statuses</option>
+                        <option value="available">Available</option>
+                        <option value="on_trip">On Trip</option>
+                        <option value="maintenance">Maintenance</option>
+                    </select>
+                </div>
+            </div>
+
             <div class="table-scroll">
                 <table id="vehicles-table">
-                    <thead><tr><th>Plate number</th><th>Category</th><th>Model</th><th>Capacity</th><th>Status</th><th>View / Edit</th></tr></thead>
-                    <tbody><tr><td colspan="6" class="workspace-empty">Vehicle records will appear here once page behavior is implemented.</td></tr></tbody>
+                    <thead>
+                        <tr>
+                            <th>Plate number</th>
+                            <th>Category</th>
+                            <th>Model</th>
+                            <th>Capacity</th>
+                            <th>Status</th>
+                            <th>Insurance expiry</th>
+                            <th style="text-align: right;">Coverage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="7" class="workspace-empty">Loading vehicle records…</td></tr>
+                    </tbody>
                 </table>
             </div>
         </section>
-        <p class="workspace-note">This page is a layout preview. Record viewing, editing, and saving are not connected.</p>
+
+        <!-- Add Vehicle Dialog -->
+        <dialog id="add-vehicle-dialog" class="user-dialog">
+            <div class="user-dialog-header">
+                <div>
+                    <p class="eyebrow">FLEET REGISTRATION</p>
+                    <h2>Add new vehicle</h2>
+                </div>
+                <button type="button" id="close-vehicle-dialog" class="icon-button" aria-label="Close dialog">×</button>
+            </div>
+            <form id="add-vehicle-form">
+                <div class="form-grid user-dialog-grid">
+                    <div class="form-field">
+                        <label for="v-plate">Plate number</label>
+                        <input type="text" id="v-plate" name="plate_number" placeholder="e.g. GR-2024-26" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="v-category">Category</label>
+                        <select id="v-category" name="category" required>
+                            <option value="bus">Bus</option>
+                            <option value="van">Van</option>
+                            <option value="truck">Truck</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="v-model">Model</label>
+                        <input type="text" id="v-model" name="model" placeholder="e.g. Toyota Coaster" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="v-year">Year</label>
+                        <input type="text" id="v-year" name="year" placeholder="e.g. 2023">
+                    </div>
+                    <div class="form-field">
+                        <label for="v-capacity">Passenger / Seat capacity</label>
+                        <input type="number" id="v-capacity" name="capacity" min="1" max="100" value="15" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="v-status">Initial status</label>
+                        <select id="v-status" name="status">
+                            <option value="available">Available</option>
+                            <option value="maintenance">Maintenance</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="v-ins-exp">Insurance expiry</label>
+                        <input type="date" id="v-ins-exp" name="insurance_expiry" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="v-lic-exp">Roadworthy / Licence expiry</label>
+                        <input type="date" id="v-lic-exp" name="license_expiry" required>
+                    </div>
+                </div>
+                <p id="vehicle-form-message" class="form-message" role="status" aria-live="polite"></p>
+                <div class="user-dialog-actions">
+                    <button type="button" class="button button-secondary" onclick="document.querySelector('#add-vehicle-dialog').close()">Cancel</button>
+                    <button type="submit" class="button">Register vehicle</button>
+                </div>
+            </form>
+        </dialog>
     </main>
+
+    <script src="../js/api.js"></script>
     <script src="../js/role-nav.js"></script>
+    <script src="../js/vehicles.js"></script>
 </body>
 </html>

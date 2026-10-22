@@ -26,7 +26,7 @@
         </header>
         <div class="workspace-toolbar">
             <p id="user-list-status" role="status" aria-live="polite">Loading user records…</p>
-            <button class="button" type="button" disabled title="User creation is not available on this page yet">Add user</button>
+            <button id="add-user-btn" class="button" type="button">+ Add user</button>
         </div>
         <section class="panel workspace-panel" aria-label="User accounts">
             <div class="table-scroll">
@@ -73,6 +73,78 @@
                 <button id="user-dialog-cancel" class="button button-secondary" type="button">Close</button>
                 <button id="user-dialog-edit" class="button button-secondary" type="button">Edit</button>
                 <button id="user-dialog-save" class="button" type="submit" hidden>Save changes</button>
+            </div>
+        </form>
+    </dialog>
+    <dialog id="create-user-dialog" class="user-dialog" aria-labelledby="create-user-title">
+        <form id="create-user-form">
+            <div class="user-dialog-header">
+                <div>
+                    <p class="eyebrow">NEW ACCOUNT</p>
+                    <h2 id="create-user-title">Create user account</h2>
+                </div>
+                <button id="create-user-close" class="icon-button" type="button" aria-label="Close dialog">×</button>
+            </div>
+            <p class="user-dialog-note">Fill out account credentials and assign a role. Driver accounts require licence details.</p>
+            <div class="form-grid user-dialog-grid">
+                <div class="form-field form-field-full">
+                    <label for="create-role">Account role</label>
+                    <select id="create-role" name="role" required>
+                        <option value="customer">Customer</option>
+                        <option value="driver">Driver</option>
+                        <option value="admin">Administrator</option>
+                    </select>
+                </div>
+                <div id="create-driver-fields" class="form-field-full" hidden style="background: var(--surface); padding: 12px; border-radius: var(--r-sm); border: 1px solid var(--line);">
+                    <p style="margin: 0 0 10px; font-weight: 600; font-size: 0.8rem; color: var(--navy);">Driver licence details</p>
+                    <div class="form-grid">
+                        <div class="form-field">
+                            <label for="create-license-number">Licence number</label>
+                            <input id="create-license-number" name="license_number" placeholder="e.g. DL-2024-9988">
+                        </div>
+                        <div class="form-field">
+                            <label for="create-license-expiry">Licence expiry</label>
+                            <input id="create-license-expiry" name="license_expiry" type="date">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-field">
+                    <label for="create-username">Username</label>
+                    <input id="create-username" name="username" required placeholder="e.g. jdoe">
+                </div>
+                <div class="form-field">
+                    <label for="create-email">Email</label>
+                    <input id="create-email" name="email" type="email" required placeholder="user@company.com">
+                </div>
+                <div class="form-field form-field-full">
+                    <label for="create-password">Temporary password</label>
+                    <input id="create-password" name="password" type="password" required placeholder="Min 6 characters">
+                </div>
+                <div class="form-field">
+                    <label for="create-first-name">First name</label>
+                    <input id="create-first-name" name="first_name" required placeholder="John">
+                </div>
+                <div class="form-field">
+                    <label for="create-last-name">Last name</label>
+                    <input id="create-last-name" name="last_name" required placeholder="Doe">
+                </div>
+                <div class="form-field">
+                    <label for="create-phone">Phone <span>(optional)</span></label>
+                    <input id="create-phone" name="phone" type="tel" placeholder="+233...">
+                </div>
+                <div class="form-field">
+                    <label for="create-middle-name">Middle name <span>(optional)</span></label>
+                    <input id="create-middle-name" name="middle_name">
+                </div>
+                <div class="form-field form-field-full">
+                    <label for="create-address">Address <span>(optional)</span></label>
+                    <input id="create-address" name="address" placeholder="Physical location">
+                </div>
+            </div>
+            <div id="create-user-alert" class="alert alert-error" hidden style="margin-top: 14px;"></div>
+            <div class="user-dialog-actions" style="margin-top: 16px;">
+                <button id="create-user-cancel" class="button button-secondary" type="button">Cancel</button>
+                <button id="create-user-submit" class="button" type="submit">Create account</button>
             </div>
         </form>
     </dialog>

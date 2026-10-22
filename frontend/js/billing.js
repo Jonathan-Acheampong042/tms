@@ -168,7 +168,14 @@ async function loadBillingPage(resource) {
   previous.disabled = true;
   next.disabled = true;
   config.message.dataset.state = '';
-  config.message.textContent = 'Loading records…';
+  config.message.textContent = '';
+
+  // Show skeleton rows while loading
+  if (window.showTableSkeleton) {
+    window.showTableSkeleton(config.table, config.columns.length);
+  } else {
+    config.message.textContent = 'Loading records…';
+  }
 
   try {
     const result = await apiFetch(`/billing/${resource}?${filters.toString()}`);
@@ -258,3 +265,156 @@ document.querySelectorAll('[data-export-resource]').forEach((button) => {
 });
 
 for (const resource of Object.keys(billingResources)) loadBillingPage(resource);
+
+// Invoice Modal Logic
+const openInvoiceModalBtn = document.querySelector('#open-invoice-modal-btn');
+const createInvoiceModal = document.querySelector('#create-invoice-modal');
+const createInvoiceForm = document.querySelector('#create-invoice-form');
+const createInvoiceClose = document.querySelector('#create-invoice-close');
+const createInvoiceCancel = document.querySelector('#create-invoice-cancel');
+const createInvoiceSubmit = document.querySelector('#create-invoice-submit');
+const invoiceAlert = document.querySelector('#invoice-alert');
+
+if (openInvoiceModalBtn && createInvoiceModal) {
+  openInvoiceModalBtn.addEventListener('click', () => {
+    createInvoiceForm.reset();
+    const today = new Date();
+    const in30Days = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000);
+    const dueDateInput = document.querySelector('#inv-due-date');
+    if (dueDateInput) dueDateInput.value = in30Days.toISOString().slice(0, 10);
+    if (invoiceAlert) invoiceAlert.hidden = true;
+    createInvoiceSubmit.disabled = false;
+    createInvoiceModal.showModal();
+  });
+}
+if (createInvoiceClose && createInvoiceModal) {
+  createInvoiceClose.addEventListener('click', () => createInvoiceModal.close());
+}
+if (createInvoiceCancel && createInvoiceModal) {
+  createInvoiceCancel.addEventListener('click', () => createInvoiceModal.close());
+}
+if (createInvoiceModal) {
+  createInvoiceModal.addEventListener('click', (e) => {
+    if (e.target === createInvoiceModal) createInvoiceModal.close();
+  });
+}
+
+if (createInvoiceForm) {
+  createInvoiceForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (invoiceAlert) invoiceAlert.hidden = true;
+    createInvoiceSubmit.disabled = true;
+
+    const formData = new FormData(createInvoiceForm);
+    const body = {
+      invoice_number: formData.get('invoice_number')?.trim() || null,
+      amount: Number(formData.get('amount')),
+      due_date: formData.get('due_date'),
+      status: formData.get('status') || 'unpaid',
+    };
+
+    try {
+      const newInv = await apiFetch('/invoices', { method: 'POST', body });
+      createInvoiceModal.close();
+      createInvoiceForm.reset();
+      loadBillingPage('invoices');
+      if (window.showToast) {
+        window.showToast.success(`Invoice ${newInv.invoice_number || 'entry'} generated successfully!`, 'Invoice Created');
+      }
+    } catch (err) {
+      console.error('Could not create invoice:', err);
+      createInvoiceSubmit.disabled = false;
+      if (window.showAlert) {
+        window.showAlert('#invoice-alert', err.message || 'Failed to create invoice.', 'error');
+      }
+      if (window.showToast) {
+        window.showToast.error(err.message || 'Could not create invoice.', 'Error');
+      }
+    }
+  });
+}
+
+// Payment Modal Logic
+const openPaymentModalBtn = document.querySelector('#open-payment-modal-btn');
+const createPaymentModal = document.querySelector('#create-payment-modal');
+const createPaymentForm = document.querySelector('#create-payment-form');
+const createPaymentClose = document.querySelector('#create-payment-close');
+const createPaymentCancel = document.querySelector('#create-payment-cancel');
+const createPaymentSubmit = document.querySelector('#create-payment-submit');
+const paymentAlert = document.querySelector('#payment-alert');
+const payInvoiceSelect = document.querySelector('#pay-invoice-id');
+
+async function populateInvoiceSelect() {
+  if (!payInvoiceSelect) return;
+  payInvoiceSelect.innerHTML = '<option value="">Loading invoices…</option>';
+  try {
+    const res = await apiFetch('/billing/invoices?pageSize=50');
+    const items = res?.items || [];
+    payInvoiceSelect.innerHTML = '<option value="">Select invoice to pay…</option>';
+    for (const inv of items) {
+      const opt = document.createElement('option');
+      opt.value = inv.id;
+      opt.textContent = `${inv.invoice_number} — ${ghanaCedi.format(inv.amount)} (${inv.status})`;
+      payInvoiceSelect.append(opt);
+    }
+  } catch (err) {
+    payInvoiceSelect.innerHTML = '<option value="">Failed to load invoices</option>';
+  }
+}
+
+if (openPaymentModalBtn && createPaymentModal) {
+  openPaymentModalBtn.addEventListener('click', async () => {
+    createPaymentForm.reset();
+    if (paymentAlert) paymentAlert.hidden = true;
+    createPaymentSubmit.disabled = false;
+    await populateInvoiceSelect();
+    createPaymentModal.showModal();
+  });
+}
+if (createPaymentClose && createPaymentModal) {
+  createPaymentClose.addEventListener('click', () => createPaymentModal.close());
+}
+if (createPaymentCancel && createPaymentModal) {
+  createPaymentCancel.addEventListener('click', () => createPaymentModal.close());
+}
+if (createPaymentModal) {
+  createPaymentModal.addEventListener('click', (e) => {
+    if (e.target === createPaymentModal) createPaymentModal.close();
+  });
+}
+
+if (createPaymentForm) {
+  createPaymentForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (paymentAlert) paymentAlert.hidden = true;
+    createPaymentSubmit.disabled = true;
+
+    const formData = new FormData(createPaymentForm);
+    const body = {
+      invoice_id: formData.get('invoice_id'),
+      amount: Number(formData.get('amount')),
+      method: formData.get('method'),
+      status: formData.get('status') || 'completed',
+    };
+
+    try {
+      await apiFetch('/payments', { method: 'POST', body });
+      createPaymentModal.close();
+      createPaymentForm.reset();
+      loadBillingPage('payments');
+      loadBillingPage('invoices');
+      if (window.showToast) {
+        window.showToast.success(`Payment of ${ghanaCedi.format(body.amount)} recorded successfully!`, 'Payment Logged');
+      }
+    } catch (err) {
+      console.error('Could not record payment:', err);
+      createPaymentSubmit.disabled = false;
+      if (window.showAlert) {
+        window.showAlert('#payment-alert', err.message || 'Failed to record payment.', 'error');
+      }
+      if (window.showToast) {
+        window.showToast.error(err.message || 'Could not record payment.', 'Error');
+      }
+    }
+  });
+}

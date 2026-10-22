@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f4f7f6">
+    <title>Driver Incidents | Transport Management System</title>
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/pages/incidents.css">
+</head>
+<body class="role-layout">
+    <button class="role-menu-toggle" type="button" aria-controls="role-sidebar" aria-expanded="false" aria-label="Open navigation"><span></span><span></span><span></span></button>
+    <button class="role-sidebar-backdrop" type="button" aria-label="Dismiss navigation overlay" hidden></button>
+    <aside class="role-sidebar" id="role-sidebar">
+        <a href="admin-dashboard.html" class="brand"><span>TRANSPORT MANAGEMENT SYSTEM</span></a>
+        <p class="role-nav-label" data-profile-role>Account</p>
+        <nav class="role-nav" aria-label="Role navigation" data-role-pages></nav>
+        <a class="role-profile-link" href="profile.html">Profile</a>
+        <button class="role-logout" type="button" data-logout>Log out</button>
+    </aside>
+    <main class="role-home workspace-main">
+        <header class="role-home-header">
+            <p class="eyebrow">SAFETY &amp; RISK MANAGEMENT</p>
+            <h1>Driver incidents</h1>
+            <p>Review safety incident logs, severity classifications, driver accountability, and road events.</p>
+        </header>
+
+        <div class="workspace-toolbar">
+            <p id="incidents-count">Loading incidents…</p>
+            <button class="button" type="button" id="report-incident-btn">Report incident</button>
+        </div>
+
+        <section class="panel workspace-panel" aria-label="Driver incident records">
+            <div class="table-filters" style="display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
+                <div class="form-field" style="min-width: 240px; flex: 1;">
+                    <label for="incident-search">Search incidents</label>
+                    <input id="incident-search" type="search" placeholder="Filter by driver name, licence, or description…">
+                </div>
+                <div class="form-field" style="min-width: 160px;">
+                    <label for="incident-severity-filter">Severity</label>
+                    <select id="incident-severity-filter">
+                        <option value="">All severities</option>
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-scroll">
+                <table id="incidents-table">
+                    <thead>
+                        <tr>
+                            <th>Incident date</th>
+                            <th>Driver</th>
+                            <th>Severity</th>
+                            <th>Description</th>
+                            <th>Trip ref</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="5" class="workspace-empty">Loading driver incident reports…</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Report Incident Dialog -->
+        <dialog id="incident-dialog" class="user-dialog">
+            <div class="user-dialog-header">
+                <div>
+                    <p class="eyebrow">SAFETY LOGGING</p>
+                    <h2>Log driver incident</h2>
+                </div>
+                <button type="button" onclick="document.querySelector('#incident-dialog').close()" class="icon-button" aria-label="Close dialog">×</button>
+            </div>
+            <form id="incident-form">
+                <div class="form-grid user-dialog-grid">
+                    <div class="form-field form-field-full">
+                        <label for="inc-driver">Driver involved</label>
+                        <select id="inc-driver" name="driver_id" required>
+                            <option value="">Loading drivers…</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="inc-severity">Severity level</label>
+                        <select id="inc-severity" name="severity" required>
+                            <option value="low">Low (minor delay, traffic)</option>
+                            <option value="medium">Medium (breakdown, altercation)</option>
+                            <option value="high">High (accident, safety hazard)</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="inc-date">Date of incident</label>
+                        <input type="date" id="inc-date" name="incident_date" required>
+                    </div>
+                    <div class="form-field form-field-full">
+                        <label for="inc-desc">Incident description</label>
+                        <textarea id="inc-desc" name="description" rows="3" placeholder="Provide details of the incident…" required style="padding: 10px;"></textarea>
+                    </div>
+                </div>
+                <p id="incident-form-message" class="form-message" role="status" aria-live="polite"></p>
+                <div class="user-dialog-actions">
+                    <button type="button" class="button button-secondary" onclick="document.querySelector('#incident-dialog').close()">Cancel</button>
+                    <button type="submit" class="button button-danger">Submit incident report</button>
+                </div>
+            </form>
+        </dialog>
+    </main>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/role-nav.js"></script>
+    <script src="../js/incidents.js"></script>
+</body>
+</html>
+

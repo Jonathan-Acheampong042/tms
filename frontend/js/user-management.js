@@ -126,15 +126,19 @@ function renderUsers() {
 }
 
 function showSkeletonLoaders() {
-  userTableBody.replaceChildren();
-  for (let i = 0; i < 5; i++) {
-    const row = document.createElement('tr');
-    row.className = 'skeleton-row';
-    const cell = document.createElement('td');
-    cell.colSpan = 6;
-    cell.innerHTML = '<div class="skeleton-loader"></div>';
-    row.append(cell);
-    userTableBody.append(row);
+  if (window.showTableSkeleton) {
+    window.showTableSkeleton(userTableBody, 6);
+  } else {
+    userTableBody.replaceChildren();
+    for (let i = 0; i < 5; i++) {
+      const row = document.createElement('tr');
+      row.className = 'skeleton-row';
+      const cell = document.createElement('td');
+      cell.colSpan = 6;
+      cell.innerHTML = '<div class="skeleton-loader"></div>';
+      row.append(cell);
+      userTableBody.append(row);
+    }
   }
 }
 
@@ -200,11 +204,99 @@ userDialogForm.addEventListener('submit', async (event) => {
       dialogFields[field].value = updatedUser[field] ?? '';
     }
     userDialog.close();
+    if (window.showToast) {
+      window.showToast.success(`Updated profile for ${formatUserName(updatedUser)}.`, 'Profile Updated');
+    }
   } catch (error) {
     console.error('Could not update user profile:', error);
     userDialogMessage.textContent = error.message || 'Could not update the user profile.';
     userDialogSave.disabled = false;
+    if (window.showToast) {
+      window.showToast.error(error.message || 'Could not update user profile.', 'Update Failed');
+    }
   }
 });
+
+// Create User Modal Logic
+const addUserBtn = document.querySelector('#add-user-btn');
+const createUserDialog = document.querySelector('#create-user-dialog');
+const createUserForm = document.querySelector('#create-user-form');
+const createRoleSelect = document.querySelector('#create-role');
+const createDriverFields = document.querySelector('#create-driver-fields');
+const createUserClose = document.querySelector('#create-user-close');
+const createUserCancel = document.querySelector('#create-user-cancel');
+const createUserSubmit = document.querySelector('#create-user-submit');
+const createUserAlert = document.querySelector('#create-user-alert');
+
+function updateCreateRoleFields() {
+  const isDriver = createRoleSelect?.value === 'driver';
+  if (createDriverFields) {
+    createDriverFields.hidden = !isDriver;
+    const inputs = createDriverFields.querySelectorAll('input');
+    inputs.forEach(input => {
+      input.required = isDriver;
+      if (!isDriver) input.value = '';
+    });
+  }
+}
+
+if (createRoleSelect) {
+  createRoleSelect.addEventListener('change', updateCreateRoleFields);
+}
+
+if (addUserBtn && createUserDialog) {
+  addUserBtn.addEventListener('click', () => {
+    createUserForm.reset();
+    updateCreateRoleFields();
+    if (createUserAlert) createUserAlert.hidden = true;
+    createUserSubmit.disabled = false;
+    createUserDialog.showModal();
+  });
+}
+
+if (createUserClose && createUserDialog) {
+  createUserClose.addEventListener('click', () => createUserDialog.close());
+}
+if (createUserCancel && createUserDialog) {
+  createUserCancel.addEventListener('click', () => createUserDialog.close());
+}
+if (createUserDialog) {
+  createUserDialog.addEventListener('click', (e) => {
+    if (e.target === createUserDialog) createUserDialog.close();
+  });
+}
+
+if (createUserForm) {
+  createUserForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (createUserAlert) createUserAlert.hidden = true;
+    createUserSubmit.disabled = true;
+
+    const formData = new FormData(createUserForm);
+    const body = Object.fromEntries(formData.entries());
+
+    for (const opt of ['middle_name', 'phone', 'address', 'license_number', 'license_expiry']) {
+      body[opt] = body[opt]?.trim() || null;
+    }
+
+    try {
+      const newUser = await apiFetch('/users', { method: 'POST', body });
+      createUserDialog.close();
+      createUserForm.reset();
+      await loadUsers();
+      if (window.showToast) {
+        window.showToast.success(`User account created successfully for ${newUser.username || body.username}!`, 'Account Created');
+      }
+    } catch (err) {
+      createUserSubmit.disabled = false;
+      if (window.showAlert) {
+        window.showAlert('#create-user-alert', err.message || 'Failed to create user account.', 'error', 'Creation Error');
+      }
+      if (window.showToast) {
+        window.showToast.error(err.message || 'Failed to create user account.', 'Error');
+      }
+    }
+  });
+}
 
 loadUsers();

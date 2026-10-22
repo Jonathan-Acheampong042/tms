@@ -8,11 +8,14 @@ const rolePages = {
     ['Overview', 'customer-dashboard.html'],
     ['Bookings', 'bookings.html'],
     ['Trips', 'trips.html'],
+    ['Announcements', 'announcements.html'],
     ['Notifications', 'notifications.html'],
   ],
   driver: [
     ['Overview', 'driver-dashboard.html'],
     ['Trips', 'trips.html'],
+    ['Incidents', 'incidents.html'],
+    ['Announcements', 'announcements.html'],
     ['Notifications', 'notifications.html'],
   ],
   admin: [
@@ -20,6 +23,7 @@ const rolePages = {
     ['User management', 'user-management.html'],
     ['Vehicles', 'vehicles.html'],
     ['Drivers', 'drivers.html'],
+    ['Incidents', 'incidents.html'],
     ['Trips', 'trips.html'],
     ['Bookings', 'bookings.html'],
     ['Fuel', 'fuel.html'],
@@ -27,6 +31,7 @@ const rolePages = {
       ['Invoices', 'billing.html?tab=invoices', 'invoices'],
       ['Payments', 'billing.html?tab=payments', 'payments'],
     ]],
+    ['Announcements', 'announcements.html'],
     ['Notifications', 'notifications.html'],
     ['Reports', 'reports.html', [
       ['All Categories', 'reports.html?category=all', 'all'],
@@ -37,6 +42,7 @@ const rolePages = {
       ['Payments', 'reports.html?category=payments', 'payments'],
       ['Revenue', 'reports.html?category=revenue', 'revenue'],
     ]],
+    ['Audit logs', 'audit-logs.html'],
   ],
 };
 
@@ -45,6 +51,40 @@ const roleLabels = {
   driver: 'Driver',
   admin: 'Administrator',
 };
+
+const NAV_ICONS = {
+  overview: '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>',
+  'user management': '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  vehicles: '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="3" width="15" height="13" rx="2"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>',
+  drivers: '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="4.93" y1="19.07" x2="9.88" y2="14.12"/><line x1="19.07" y1="19.07" x2="14.12" y2="14.12"/></svg>',
+  incidents: '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+  trips: '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="19" r="3"/><circle cx="18" cy="5" r="3"/><path d="M12 19h4.5a3.5 3.5 0 0 0 0-7h-9a3.5 3.5 0 0 1 0-7H12"/></svg>',
+  bookings: '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="m9 16 2 2 4-4"/></svg>',
+  fuel: '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 22h12"/><path d="M4 9h10"/><path d="M4 22V4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v18"/><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L19 6"/></svg>',
+  billing: '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>',
+  announcements: '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>',
+  notifications: '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>',
+  reports: '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+  'audit logs': '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>',
+  profile: '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+  logout: '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>',
+};
+
+const CHEVRON_ICON = '<svg class="role-nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
+
+function escapeHtml(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function getNavIcon(label) {
+  const key = (label || '').trim().toLowerCase();
+  return NAV_ICONS[key] || '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/></svg>';
+}
 
 let currentUser;
 try {
@@ -66,11 +106,20 @@ if (!currentUser?.id || !links) {
   if (!currentPageAllowed) {
     window.location.replace(links[0][1]);
   } else {
-    const roleLabel = sidebar.querySelector('[data-profile-role]');
+    const roleLabel = sidebar.querySelector('[data-profile-role], .role-nav-label');
     if (roleLabel) roleLabel.textContent = roleLabels[currentUser.role];
 
     const homeLink = sidebar.querySelector('.brand');
-    if (homeLink) homeLink.href = links[0][1];
+    if (homeLink) {
+      homeLink.href = links[0][1];
+      homeLink.innerHTML = `
+        <span class="brand-badge">TMS</span>
+        <span class="brand-title">
+          <span class="brand-title-main">Transport System</span>
+          <span class="brand-title-sub">Fleet &amp; Logistics</span>
+        </span>
+      `;
+    }
 
     const navigation = sidebar.querySelector('[data-role-pages]');
     if (navigation) {
@@ -78,7 +127,7 @@ if (!currentUser?.id || !links) {
         if (!children) {
           const link = document.createElement('a');
           link.href = href;
-          link.textContent = label;
+          link.innerHTML = `${getNavIcon(label)}<span class="nav-label-text">${escapeHtml(label)}</span>`;
           if (currentPage === href) link.setAttribute('aria-current', 'page');
           return link;
         }
@@ -92,18 +141,14 @@ if (!currentUser?.id || !links) {
 
         const parentLink = document.createElement('a');
         parentLink.href = href;
-        parentLink.textContent = label;
+        parentLink.innerHTML = `${getNavIcon(label)}<span class="nav-label-text">${escapeHtml(label)}</span>`;
         if (isCurrentParent) parentLink.setAttribute('aria-current', 'page');
 
         const toggleBtn = document.createElement('button');
         toggleBtn.type = 'button';
         toggleBtn.className = 'role-nav-subtoggle';
         toggleBtn.setAttribute('aria-label', `Toggle ${label} sub-navigation`);
-
-        const chevron = document.createElement('span');
-        chevron.className = 'role-nav-chevron';
-        chevron.textContent = '▼';
-        toggleBtn.append(chevron);
+        toggleBtn.innerHTML = CHEVRON_ICON;
 
         parentRow.append(parentLink, toggleBtn);
 
@@ -183,7 +228,10 @@ if (!currentUser?.id || !links) {
     }
 
     const profileLink = sidebar.querySelector('.role-profile-link');
-    if (profileLink && isProfilePage) profileLink.setAttribute('aria-current', 'page');
+    if (profileLink) {
+      profileLink.innerHTML = `${getNavIcon('profile')}<span class="nav-label-text">Profile</span>`;
+      if (isProfilePage) profileLink.setAttribute('aria-current', 'page');
+    }
   }
 }
 
@@ -232,10 +280,13 @@ window.updateSidebarActiveBillingTab = function (tab) {
 };
 
 const logoutButton = sidebar?.querySelector('[data-logout]');
-logoutButton?.addEventListener('click', () => {
-  sessionStorage.removeItem(currentUserKey);
-  window.location.replace('login.html');
-});
+if (logoutButton) {
+  logoutButton.innerHTML = `${getNavIcon('logout')}<span class="nav-label-text">Log out</span>`;
+  logoutButton.addEventListener('click', () => {
+    sessionStorage.removeItem(currentUserKey);
+    window.location.replace('login.html');
+  });
+}
 
 let setMenuOpen;
 if (sidebar && menuToggle && backdrop) {

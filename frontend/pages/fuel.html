@@ -20,24 +20,91 @@
     </aside>
     <main class="role-home workspace-main">
         <header class="role-home-header">
-            <p class="eyebrow">FLEET</p>
+            <p class="eyebrow">FLEET EXPENSES</p>
             <h1>Fuel records</h1>
-            <p>Review vehicle refuelling records, quantities, costs, and dates.</p>
+            <p>Review vehicle refuelling transactions, fuel volumes, expenditure, and station details.</p>
         </header>
+
         <div class="workspace-toolbar">
-            <p>Fuel record layout</p>
-            <button class="button" type="button">Add record</button>
+            <p id="fuel-count">Loading fuel records…</p>
+            <button class="button" type="button" id="open-fuel-modal-btn">+ Log fuel entry</button>
         </div>
+
         <section class="panel workspace-panel" aria-label="Fuel records">
+            <div class="table-filters" style="display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
+                <div class="form-field" style="min-width: 240px; flex: 1;">
+                    <label for="fuel-search">Search fuel logs</label>
+                    <input id="fuel-search" type="search" placeholder="Filter by vehicle plate or station…">
+                </div>
+            </div>
+
             <div class="table-scroll">
                 <table id="fuel-table">
-                    <thead><tr><th>Vehicle</th><th>Litres</th><th>Cost</th><th>Station</th><th>Date</th><th>View / Edit</th></tr></thead>
-                    <tbody><tr><td colspan="6" class="workspace-empty">Fuel records will appear here once page behavior is implemented.</td></tr></tbody>
+                    <thead>
+                        <tr>
+                            <th>Vehicle plate</th>
+                            <th>Litres</th>
+                            <th>Cost</th>
+                            <th>Station</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="5" class="workspace-empty">Loading fuel records…</td></tr>
+                    </tbody>
                 </table>
             </div>
         </section>
-        <p class="workspace-note">This page is a layout preview. Fuel record viewing and editing are not connected.</p>
     </main>
+
+    <!-- Log Fuel Modal -->
+    <dialog id="fuel-modal" class="app-modal" aria-labelledby="fuel-modal-title">
+        <form id="fuel-form">
+            <div class="modal-header">
+                <div>
+                    <p class="eyebrow">NEW EXPENSE</p>
+                    <h2 id="fuel-modal-title">Log fuel entry</h2>
+                </div>
+                <button id="fuel-modal-close" class="icon-button" type="button" aria-label="Close dialog">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-field form-field-full">
+                        <label for="fuel-vehicle">Vehicle</label>
+                        <select id="fuel-vehicle" name="vehicle_id" required>
+                            <option value="">Select vehicle…</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="fuel-litres">Fuel volume (Litres)</label>
+                        <input id="fuel-litres" name="litres" type="number" step="0.1" min="1" max="1000" required placeholder="e.g. 45.5">
+                    </div>
+                    <div class="form-field">
+                        <label for="fuel-cost">Total cost (GHS)</label>
+                        <input id="fuel-cost" name="cost" type="number" step="0.01" min="1" max="50000" required placeholder="e.g. 680.00">
+                    </div>
+                    <div class="form-field form-field-full">
+                        <label for="fuel-station">Fuel station / location</label>
+                        <input id="fuel-station" name="station" required placeholder="e.g. Shell Airport / Total Kumasi">
+                    </div>
+                    <div class="form-field form-field-full">
+                        <label for="fuel-driver">Driver <span>(optional)</span></label>
+                        <select id="fuel-driver" name="driver_id">
+                            <option value="">No assigned driver</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="fuel-alert" class="alert alert-error" hidden style="margin-top: 14px;"></div>
+            </div>
+            <div class="modal-footer">
+                <button id="fuel-modal-cancel" class="button button-secondary" type="button">Cancel</button>
+                <button id="fuel-submit-btn" class="button" type="submit">Save fuel record</button>
+            </div>
+        </form>
+    </dialog>
+
+    <script src="../js/api.js"></script>
     <script src="../js/role-nav.js"></script>
+    <script src="../js/fuel.js"></script>
 </body>
 </html>

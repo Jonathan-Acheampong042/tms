@@ -21,36 +21,38 @@
         <header class="role-home-header">
             <p class="eyebrow">OPERATIONS</p>
             <h1>Dashboard</h1>
-            <p>Current summary of fleet and operations.</p>
+            <p>Current summary of fleet status, operational metrics, and real-time activity ledger.</p>
         </header>
 
         <section class="stats-grid">
             <div class="stat-card">
                 <h2>Total Vehicles</h2>
-                <p class="stat-value">—</p>
+                <p class="stat-value" id="stat-vehicles">—</p>
             </div>
             <div class="stat-card">
                 <h2>Active Trips</h2>
-                <p class="stat-value">—</p>
+                <p class="stat-value" id="stat-trips">—</p>
             </div>
             <div class="stat-card">
                 <h2>Pending Bookings</h2>
-                <p class="stat-value">—</p>
+                <p class="stat-value" id="stat-bookings">—</p>
             </div>
             <div class="stat-card">
                 <h2>Unpaid Invoices</h2>
-                <p class="stat-value">—</p>
+                <p class="stat-value" id="stat-invoices">—</p>
             </div>
         </section>
 
         <section class="panel workspace-panel">
             <h2>Recent activity</h2>
             <ul id="recent-activity">
-                <li class="workspace-empty">Activity will appear here once page behavior is implemented.</li>
+                <li class="workspace-empty">Loading recent activity…</li>
             </ul>
         </section>
     </main>
 
+    <script src="../js/api.js"></script>
+    <script src="../js/dashboard.js"></script>
     <script src="../js/role-nav.js"></script>
 </body>
 </html>

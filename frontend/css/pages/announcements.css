@@ -1,0 +1,57 @@
+/* Announcements Page Styles */
+.announcements-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.announcement-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px 24px;
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-xs);
+    transition: box-shadow 150ms var(--ease-out), border-color 150ms var(--ease-out);
+}
+.announcement-card:hover {
+    box-shadow: var(--shadow-sm);
+    border-color: var(--line-med);
+}
+
+.announcement-card.priority-alert {
+    border-left: 4px solid var(--coral);
+}
+.announcement-card.priority-announcement {
+    border-left: 4px solid var(--brand);
+}
+.announcement-card.priority-reminder {
+    border-left: 4px solid #f59e0b;
+}
+
+.announcement-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.announcement-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+}
+
+.announcement-body {
+    margin: 0;
+    color: var(--navy);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    word-break: break-word;
+}
+

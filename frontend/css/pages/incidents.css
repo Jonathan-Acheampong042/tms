@@ -1,0 +1,9 @@
+/**
+ * Driver Incidents Page Styles – incidents.html
+ */
+
+#incidents-table th:nth-child(3),
+#incidents-table td:nth-child(3) {
+    white-space: nowrap;
+}
+

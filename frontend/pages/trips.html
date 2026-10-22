@@ -12,7 +12,7 @@
     <button class="role-menu-toggle" type="button" aria-controls="role-sidebar" aria-expanded="false" aria-label="Open navigation"><span></span><span></span><span></span></button>
     <button class="role-sidebar-backdrop" type="button" aria-label="Dismiss navigation overlay" hidden></button>
     <aside class="role-sidebar" id="role-sidebar">
-        <a href="customer-dashboard.html" class="brand"><span>TRANSPORT MANAGEMENT SYSTEM</span></a>
+        <a href="admin-dashboard.html" class="brand"><span>TRANSPORT MANAGEMENT SYSTEM</span></a>
         <p class="role-nav-label" data-profile-role>Account</p>
         <nav class="role-nav" aria-label="Role navigation" data-role-pages></nav>
         <a class="role-profile-link" href="profile.html">Profile</a>
@@ -20,24 +20,113 @@
     </aside>
     <main class="role-home workspace-main">
         <header class="role-home-header">
-            <p class="eyebrow">OPERATIONS</p>
+            <p class="eyebrow">TRANSIT OPERATIONS</p>
             <h1>Trips</h1>
-            <p>Review scheduled trips, assigned vehicles, drivers, and trip status.</p>
+            <p>Review scheduled trips, assigned vehicles, drivers, route schedules, and progress status.</p>
         </header>
+
         <div class="workspace-toolbar">
-            <p>Trip record layout</p>
-            <button class="button" type="button">New trip</button>
+            <p id="trips-count">Loading trips…</p>
+            <button class="button" type="button" id="open-trip-modal-btn">+ Schedule trip</button>
         </div>
+
         <section class="panel workspace-panel" aria-label="Trip records">
+            <div class="table-filters" style="display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
+                <div class="form-field" style="min-width: 220px; flex: 1;">
+                    <label for="trip-search">Search trips</label>
+                    <input id="trip-search" type="search" placeholder="Filter by route, location, or vehicle plate…">
+                </div>
+                <div class="form-field" style="min-width: 160px;">
+                    <label for="trip-status-filter">Status</label>
+                    <select id="trip-status-filter">
+                        <option value="">All statuses</option>
+                        <option value="scheduled">Scheduled</option>
+                        <option value="in_progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+            </div>
+
             <div class="table-scroll">
                 <table id="trips-table">
-                    <thead><tr><th>Route</th><th>Vehicle</th><th>Driver</th><th>Scheduled start</th><th>Status</th><th>View / Edit</th></tr></thead>
-                    <tbody><tr><td colspan="6" class="workspace-empty">Trip records will appear here once page behavior is implemented.</td></tr></tbody>
+                    <thead>
+                        <tr>
+                            <th>Route</th>
+                            <th>Vehicle</th>
+                            <th>Driver</th>
+                            <th>Scheduled start</th>
+                            <th>Scheduled end</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="6" class="workspace-empty">Loading trip records…</td></tr>
+                    </tbody>
                 </table>
             </div>
         </section>
-        <p class="workspace-note">This page is a layout preview. Trip record viewing and editing are not connected.</p>
     </main>
+
+    <!-- Schedule Trip Modal -->
+    <dialog id="trip-modal" class="app-modal" aria-labelledby="trip-modal-title">
+        <form id="trip-form">
+            <div class="modal-header">
+                <div>
+                    <p class="eyebrow">DISPATCH OPERATIONS</p>
+                    <h2 id="trip-modal-title">Schedule new trip</h2>
+                </div>
+                <button id="trip-modal-close" class="icon-button" type="button" aria-label="Close dialog">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label for="trip-origin">Origin location</label>
+                        <input id="trip-origin" name="origin" required placeholder="e.g. Accra Central">
+                    </div>
+                    <div class="form-field">
+                        <label for="trip-destination">Destination</label>
+                        <input id="trip-destination" name="destination" required placeholder="e.g. Kumasi Kejetia">
+                    </div>
+                    <div class="form-field">
+                        <label for="trip-vehicle">Assigned vehicle</label>
+                        <select id="trip-vehicle" name="vehicle_id" required>
+                            <option value="">Select vehicle…</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="trip-driver">Assigned driver</label>
+                        <select id="trip-driver" name="driver_id" required>
+                            <option value="">Select driver…</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="trip-start">Scheduled departure</label>
+                        <input id="trip-start" name="scheduled_start" type="datetime-local" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="trip-end">Scheduled arrival</label>
+                        <input id="trip-end" name="scheduled_end" type="datetime-local" required>
+                    </div>
+                    <div class="form-field form-field-full">
+                        <label for="trip-status">Initial status</label>
+                        <select id="trip-status" name="status">
+                            <option value="scheduled">Scheduled</option>
+                            <option value="in_progress">In Progress</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="trip-alert" class="alert alert-error" hidden style="margin-top: 14px;"></div>
+            </div>
+            <div class="modal-footer">
+                <button id="trip-modal-cancel" class="button button-secondary" type="button">Cancel</button>
+                <button id="trip-submit-btn" class="button" type="submit">Schedule trip</button>
+            </div>
+        </form>
+    </dialog>
+
+    <script src="../js/api.js"></script>
     <script src="../js/role-nav.js"></script>
+    <script src="../js/trips.js"></script>
 </body>
 </html>

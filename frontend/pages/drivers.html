@@ -20,20 +20,55 @@
     </aside>
     <main class="role-home workspace-main">
         <header class="role-home-header">
-            <p class="eyebrow">FLEET</p>
+            <p class="eyebrow">FLEET MANAGEMENT</p>
             <h1>Drivers</h1>
-            <p>Review driver profiles, licence information, and availability.</p>
+            <p>Review driver roster, licence verification, operational readiness, and contact information.</p>
         </header>
+
+        <div class="workspace-toolbar">
+            <p id="drivers-count">Loading drivers…</p>
+            <a href="user-management.html" class="button">+ Register driver</a>
+        </div>
+
         <section class="panel workspace-panel" aria-label="Driver records">
+            <div class="table-filters" style="display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
+                <div class="form-field" style="min-width: 220px; flex: 1;">
+                    <label for="driver-search">Search drivers</label>
+                    <input id="driver-search" type="search" placeholder="Filter by driver name or licence…">
+                </div>
+                <div class="form-field" style="min-width: 160px;">
+                    <label for="driver-status-filter">Status</label>
+                    <select id="driver-status-filter">
+                        <option value="">All statuses</option>
+                        <option value="available">Available</option>
+                        <option value="on_trip">On Trip</option>
+                        <option value="off_duty">Off Duty</option>
+                    </select>
+                </div>
+            </div>
+
             <div class="table-scroll">
                 <table id="drivers-table">
-                    <thead><tr><th>Name</th><th>Licence number</th><th>Licence expiry</th><th>Verified</th><th>Status</th><th>View / Edit</th></tr></thead>
-                    <tbody><tr><td colspan="6" class="workspace-empty">Driver records will appear here once page behavior is implemented.</td></tr></tbody>
+                    <thead>
+                        <tr>
+                            <th>Driver name</th>
+                            <th>Licence number</th>
+                            <th>Licence expiry</th>
+                            <th>Licence status</th>
+                            <th>Availability</th>
+                            <th>Contact</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="6" class="workspace-empty">Loading driver roster…</td></tr>
+                    </tbody>
                 </table>
             </div>
         </section>
-        <p class="workspace-note">This page is a layout preview. Driver record viewing and editing are not connected.</p>
     </main>
+
+    <script src="../js/api.js"></script>
     <script src="../js/role-nav.js"></script>
+    <script src="../js/drivers.js"></script>
 </body>
 </html>

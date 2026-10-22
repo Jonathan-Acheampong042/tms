@@ -12,7 +12,7 @@
     <button class="role-menu-toggle" type="button" aria-controls="role-sidebar" aria-expanded="false" aria-label="Open navigation"><span></span><span></span><span></span></button>
     <button class="role-sidebar-backdrop" type="button" aria-label="Dismiss navigation overlay" hidden></button>
     <aside class="role-sidebar" id="role-sidebar">
-        <a href="customer-dashboard.html" class="brand"><span>TRANSPORT MANAGEMENT SYSTEM</span></a>
+        <a href="admin-dashboard.html" class="brand"><span>TRANSPORT MANAGEMENT SYSTEM</span></a>
         <p class="role-nav-label" data-profile-role>Account</p>
         <nav class="role-nav" aria-label="Role navigation" data-role-pages></nav>
         <a class="role-profile-link" href="profile.html">Profile</a>
@@ -20,17 +20,27 @@
     </aside>
     <main class="role-home workspace-main">
         <header class="role-home-header">
-            <p class="eyebrow">UPDATES</p>
+            <p class="eyebrow">ACTIVITY &amp; ALERTS</p>
             <h1>Notifications</h1>
-            <p>Review account and transport operation updates.</p>
+            <p>Review personal activity, trip status changes, vehicle compliance alerts, and scheduling updates.</p>
         </header>
-        <section class="panel workspace-panel" aria-label="Notifications">
-            <ul id="notifications-list" class="workspace-notifications">
-                <li class="workspace-empty">Notifications will appear here once page behavior is implemented.</li>
+
+        <div class="workspace-toolbar">
+            <p id="notifications-count">Loading notifications…</p>
+            <div style="display: flex; gap: 8px;">
+                <button class="button button-secondary" type="button" id="mark-all-read-btn" disabled>Mark all as read</button>
+            </div>
+        </div>
+
+        <section class="panel workspace-panel" aria-label="Notification feed">
+            <ul class="workspace-notifications" id="notifications-list">
+                <li class="workspace-placeholder"><p style="margin: 0;">Loading notifications…</p></li>
             </ul>
         </section>
-        <p class="workspace-note">This page is a layout preview. Notification actions and record details are not connected.</p>
     </main>
+
+    <script src="../js/api.js"></script>
     <script src="../js/role-nav.js"></script>
+    <script src="../js/notifications.js"></script>
 </body>
 </html>

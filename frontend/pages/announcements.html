@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f4f7f6">
+    <title>Announcements | Transport Management System</title>
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/pages/announcements.css">
+</head>
+<body class="role-layout">
+    <button class="role-menu-toggle" type="button" aria-controls="role-sidebar" aria-expanded="false" aria-label="Open navigation"><span></span><span></span><span></span></button>
+    <button class="role-sidebar-backdrop" type="button" aria-label="Dismiss navigation overlay" hidden></button>
+    <aside class="role-sidebar" id="role-sidebar">
+        <a href="admin-dashboard.html" class="brand"><span>TRANSPORT MANAGEMENT SYSTEM</span></a>
+        <p class="role-nav-label" data-profile-role>Account</p>
+        <nav class="role-nav" aria-label="Role navigation" data-role-pages></nav>
+        <a class="role-profile-link" href="profile.html">Profile</a>
+        <button class="role-logout" type="button" data-logout>Log out</button>
+    </aside>
+
+    <main class="role-home workspace-main">
+        <header class="role-home-header">
+            <p class="eyebrow">SYSTEM COMMUNICATIONS</p>
+            <h1>Announcements</h1>
+            <p>Official company bulletins, fleet policy notices, maintenance advisories, and administrative broadcasts.</p>
+        </header>
+
+        <div class="workspace-toolbar">
+            <p id="announcements-count">Loading announcements…</p>
+            <button class="button" type="button" id="open-broadcast-modal-btn" style="display: none;">
+                + Broadcast announcement
+            </button>
+        </div>
+
+        <section class="panel workspace-panel" aria-label="Announcements feed">
+            <div id="announcements-list" class="announcements-grid">
+                <div class="workspace-placeholder"><p style="margin: 0;">Loading announcements…</p></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Admin Broadcast Announcement Dialog -->
+    <dialog id="broadcast-modal" class="app-modal" aria-labelledby="broadcast-modal-title">
+        <form id="broadcast-form">
+            <div class="modal-header">
+                <div>
+                    <p class="eyebrow">NEW BROADCAST</p>
+                    <h2 id="broadcast-modal-title">Broadcast announcement</h2>
+                </div>
+                <button id="broadcast-modal-close" class="icon-button" type="button" aria-label="Close dialog">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label for="broadcast-target">Target audience</label>
+                        <select id="broadcast-target" name="target" required>
+                            <option value="all">All active users</option>
+                            <option value="drivers">Drivers only</option>
+                            <option value="customers">Customers only</option>
+                            <option value="admins">Administrators only</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="broadcast-type">Notice priority / type</label>
+                        <select id="broadcast-type" name="type" required>
+                            <option value="announcement">Announcement</option>
+                            <option value="alert">Alert (Urgent)</option>
+                            <option value="reminder">Reminder</option>
+                        </select>
+                    </div>
+                    <div class="form-field form-field-full">
+                        <label for="broadcast-message">Announcement message</label>
+                        <textarea id="broadcast-message" name="message" rows="4" placeholder="Compose message to broadcast to the fleet or company…" required style="padding: 10px;"></textarea>
+                    </div>
+                </div>
+                <div id="broadcast-alert" class="alert alert-error" hidden style="margin-top: 14px;"></div>
+            </div>
+            <div class="modal-footer">
+                <button id="broadcast-modal-cancel" class="button button-secondary" type="button">Cancel</button>
+                <button id="broadcast-submit-btn" class="button" type="submit">Dispatch broadcast</button>
+            </div>
+        </form>
+    </dialog>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/role-nav.js"></script>
+    <script src="../js/announcements.js"></script>
+</body>
+</html>
+
