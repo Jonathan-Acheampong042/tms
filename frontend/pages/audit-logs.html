@@ -60,7 +60,7 @@
                             <th>Action</th>
                             <th>Entity table</th>
                             <th>Actor</th>
-                            <th>Target record ID</th>
+                            <th style="text-align: right;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -69,6 +69,39 @@
                 </table>
             </div>
         </section>
+
+        <!-- Audit Log Details Dialog -->
+        <dialog id="audit-detail-dialog" class="user-dialog">
+            <div class="user-dialog-header">
+                <div>
+                    <p class="eyebrow">SECURITY AUDIT</p>
+                    <h2>Audit Log Entry</h2>
+                </div>
+                <button type="button" onclick="document.querySelector('#audit-detail-dialog').close()" class="icon-button" aria-label="Close dialog">×</button>
+            </div>
+            <div style="padding: 20px;">
+                <div style="display: flex; gap: 10px; margin-bottom: 16px; align-items: center;">
+                    <span id="audit-detail-badge"></span>
+                    <span id="audit-detail-table" style="font-weight: 700; color: var(--navy); text-transform: uppercase; font-size: 0.85rem;"></span>
+                    <span id="audit-detail-time" style="color: var(--ink-soft); font-size: 0.8rem; margin-left: auto;"></span>
+                </div>
+                <div style="margin-bottom: 12px;">
+                    <p style="margin: 0 0 4px; font-size: 0.75rem; text-transform: uppercase; color: var(--ink-soft); font-weight: 700;">Actor / User</p>
+                    <p id="audit-detail-actor" style="margin: 0; font-weight: 600; color: var(--navy);"></p>
+                </div>
+                <div id="audit-detail-context-wrapper" style="margin-bottom: 12px;">
+                    <p style="margin: 0 0 4px; font-size: 0.75rem; text-transform: uppercase; color: var(--ink-soft); font-weight: 700;">Entity Context</p>
+                    <p id="audit-detail-context" style="margin: 0; font-weight: 600; color: var(--brand);"></p>
+                </div>
+                <div style="margin-bottom: 14px;">
+                    <p style="margin: 0 0 4px; font-size: 0.75rem; text-transform: uppercase; color: var(--ink-soft); font-weight: 700;">Target Record ID</p>
+                    <code id="audit-detail-recid" style="font-size: 0.8rem;"></code>
+                </div>
+                <div class="user-dialog-actions" style="margin-top: 20px;">
+                    <button type="button" class="button button-secondary" onclick="document.querySelector('#audit-detail-dialog').close()">Close</button>
+                </div>
+            </div>
+        </dialog>
     </main>
 
     <script src="../js/api.js"></script>

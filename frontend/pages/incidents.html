@@ -55,7 +55,7 @@
                             <th>Driver</th>
                             <th>Severity</th>
                             <th>Description</th>
-                            <th>Trip ref</th>
+                            <th style="text-align:right;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -69,8 +69,8 @@
         <dialog id="incident-dialog" class="user-dialog">
             <div class="user-dialog-header">
                 <div>
-                    <p class="eyebrow">SAFETY LOGGING</p>
-                    <h2>Log driver incident</h2>
+                    <p class="eyebrow" id="incident-dialog-eyebrow">SAFETY LOGGING</p>
+                    <h2 id="incident-dialog-title">Log driver incident</h2>
                 </div>
                 <button type="button" onclick="document.querySelector('#incident-dialog').close()" class="icon-button" aria-label="Close dialog">×</button>
             </div>
@@ -102,9 +102,41 @@
                 <p id="incident-form-message" class="form-message" role="status" aria-live="polite"></p>
                 <div class="user-dialog-actions">
                     <button type="button" class="button button-secondary" onclick="document.querySelector('#incident-dialog').close()">Cancel</button>
-                    <button type="submit" class="button button-danger">Submit incident report</button>
+                    <button type="submit" id="incident-submit-btn" class="button button-danger">Submit incident report</button>
                 </div>
             </form>
+        </dialog>
+
+        <!-- View Incident Dialog -->
+        <dialog id="view-incident-dialog" class="user-dialog">
+            <div class="user-dialog-header">
+                <div>
+                    <p class="eyebrow">INCIDENT DETAILS</p>
+                    <h2 id="view-inc-title">Safety Incident Report</h2>
+                </div>
+                <button type="button" onclick="document.querySelector('#view-incident-dialog').close()" class="icon-button" aria-label="Close dialog">×</button>
+            </div>
+            <div style="padding: 20px;">
+                <div style="display: flex; gap: 12px; margin-bottom: 16px; align-items: center;">
+                    <span id="view-inc-severity"></span>
+                    <span id="view-inc-date" style="color: var(--ink-soft); font-size: 0.85rem;"></span>
+                </div>
+                <div style="margin-bottom: 14px;">
+                    <p style="margin: 0 0 4px; font-size: 0.75rem; text-transform: uppercase; color: var(--ink-soft); font-weight: 700;">Driver Involved</p>
+                    <p id="view-inc-driver" style="margin: 0; font-weight: 600; color: var(--navy);"></p>
+                </div>
+                <div style="margin-bottom: 14px;">
+                    <p style="margin: 0 0 4px; font-size: 0.75rem; text-transform: uppercase; color: var(--ink-soft); font-weight: 700;">Description & Statement</p>
+                    <p id="view-inc-desc" style="margin: 0; line-height: 1.6; color: var(--ink); background: var(--paper-warm); padding: 12px; border-radius: var(--r-sm); border: 1px solid var(--line);"></p>
+                </div>
+                <div id="view-inc-trip-wrapper" style="margin-bottom: 14px;">
+                    <p style="margin: 0 0 4px; font-size: 0.75rem; text-transform: uppercase; color: var(--ink-soft); font-weight: 700;">Associated Trip ID</p>
+                    <code id="view-inc-trip" style="font-size: 0.8rem;"></code>
+                </div>
+                <div class="user-dialog-actions" style="margin-top: 20px;">
+                    <button type="button" class="button button-secondary" onclick="document.querySelector('#view-incident-dialog').close()">Close</button>
+                </div>
+            </div>
         </dialog>
     </main>
 

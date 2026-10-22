@@ -66,7 +66,7 @@
                             <th>Drop-off location</th>
                             <th>Cargo / Specs</th>
                             <th>Status</th>
-                            <th>Request date</th>
+                            <th style="text-align:right;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -108,6 +108,16 @@
                         <label for="book-weight">Cargo weight (kg) <span>(optional)</span></label>
                         <input id="book-weight" name="weight" type="number" step="0.5" min="1" max="50000" placeholder="e.g. 250">
                     </div>
+                    <div class="form-field form-field-full" id="booking-status-field" hidden>
+                        <label for="book-status">Booking status</label>
+                        <select id="book-status" name="status">
+                            <option value="pending">Pending</option>
+                            <option value="allocated">Allocated</option>
+                            <option value="dispatched">Dispatched</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
                 </div>
                 <div id="booking-alert" class="alert alert-error" hidden style="margin-top: 14px;"></div>
             </div>
@@ -116,6 +126,36 @@
                 <button id="booking-submit-btn" class="button" type="submit">Submit booking</button>
             </div>
         </form>
+    </dialog>
+
+    <!-- View Booking Dialog -->
+    <dialog id="view-booking-dialog" class="user-dialog">
+        <div class="user-dialog-header">
+            <div>
+                <p class="eyebrow">BOOKING DETAILS</p>
+                <h2 id="view-booking-title">Transport Booking</h2>
+            </div>
+            <button type="button" onclick="document.querySelector('#view-booking-dialog').close()" class="icon-button" aria-label="Close dialog">×</button>
+        </div>
+        <div style="padding: 20px;">
+            <div style="display: flex; gap: 10px; margin-bottom: 16px; align-items: center;">
+                <span id="view-booking-type"></span>
+                <span id="view-booking-status"></span>
+                <span id="view-booking-date" style="color: var(--ink-soft); font-size: 0.8rem; margin-left: auto;"></span>
+            </div>
+            <div style="margin-bottom: 14px;">
+                <p style="margin: 0 0 4px; font-size: 0.75rem; text-transform: uppercase; color: var(--ink-soft); font-weight: 700;">Route / Path</p>
+                <p style="margin: 0; font-weight: 600; color: var(--navy);" id="view-booking-route"></p>
+            </div>
+            <div style="margin-bottom: 14px;" id="view-booking-spec-wrap">
+                <p style="margin: 0 0 4px; font-size: 0.75rem; text-transform: uppercase; color: var(--ink-soft); font-weight: 700;">Cargo &amp; Specification</p>
+                <p style="margin: 0; color: var(--ink);" id="view-booking-specs"></p>
+            </div>
+            <div class="user-dialog-actions" style="margin-top: 20px;">
+                <button type="button" class="button button-secondary" onclick="document.querySelector('#view-booking-dialog').close()">Close</button>
+                <button type="button" class="button" id="view-booking-edit-btn">Edit booking</button>
+            </div>
+        </div>
     </dialog>
 
     <script src="../js/api.js"></script>

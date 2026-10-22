@@ -435,12 +435,18 @@ button, input, select, textarea {
 .role-sidebar-backdrop {
     display: none;
 }
+.role-menu-toggle {
+    align-items: center;
+    justify-content: center;
+}
 .role-menu-toggle span {
     display: block;
-    width: 18px;
-    height: 1.5px;
-    border-radius: 1px;
+    width: 20px;
+    height: 2px;
+    border-radius: 2px;
     background: currentColor;
+    transition: transform 200ms var(--ease-out), opacity 200ms var(--ease-out);
+    transform-origin: center;
 }
 
 /* --- Expandable Sub-Navigation (Reports / Billing) --- */
@@ -743,6 +749,20 @@ button, input, select, textarea {
 .button-danger:hover {
     background: #b91c1c;
     border-color: #b91c1c;
+}
+
+.button-sm {
+    min-height: 28px;
+    padding: 0 10px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.table-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    justify-content: flex-end;
 }
 
 .icon-button {
@@ -1150,23 +1170,48 @@ dialog.app-modal::backdrop {
 
     .role-menu-toggle {
         position: fixed;
-        z-index: 41;
-        top: 12px;
-        left: 12px;
+        z-index: 50;
+        top: 14px;
+        left: 16px;
         display: inline-flex;
         flex-direction: column;
+        align-items: center;
         justify-content: center;
-        gap: 4px;
+        gap: 5px;
         width: 42px;
         height: 42px;
         padding: 0;
-        border-radius: var(--r-sm);
+        border-radius: var(--r-md);
         border: 1px solid var(--line-med);
         background: var(--paper);
         color: var(--navy);
         box-shadow: var(--shadow-sm);
         cursor: pointer;
+        transition: background 140ms var(--ease-out), border-color 140ms var(--ease-out), box-shadow 140ms var(--ease-out), transform 100ms var(--ease-out);
     }
+    .role-menu-toggle:hover {
+        background: var(--surface);
+        border-color: var(--brand);
+        box-shadow: var(--shadow-md);
+    }
+    .role-menu-toggle:active {
+        transform: scale(0.96);
+    }
+    .role-menu-toggle[aria-expanded="true"] span:nth-child(1) {
+        transform: translateY(7px) rotate(45deg);
+    }
+    .role-menu-toggle[aria-expanded="true"] span:nth-child(2) {
+        opacity: 0;
+        transform: scaleX(0);
+    }
+    .role-menu-toggle[aria-expanded="true"] span:nth-child(3) {
+        transform: translateY(-7px) rotate(-45deg);
+    }
+
+    .role-sidebar[data-open="true"] .brand {
+        padding-left: 68px;
+    }
+
     .role-sidebar-backdrop:not([hidden]) {
         position: fixed;
         z-index: 40;
@@ -1176,8 +1221,9 @@ dialog.app-modal::backdrop {
         background: rgba(13, 31, 55, 0.45);
     }
 
+    .role-layout > .role-home,
     .workspace-main {
-        padding-top: 68px;
+        padding-top: 76px;
     }
     .workspace-toolbar {
         align-items: flex-start;
@@ -1209,11 +1255,11 @@ dialog.app-modal::backdrop {
 @media (max-width: 520px) {
     .role-home {
         width: min(100% - 36px, 700px);
-        padding-top: 36px;
+        padding-top: 76px;
     }
     .role-layout > .role-home {
         width: min(100% - 36px, 700px);
-        padding-top: 68px;
+        padding-top: 76px;
     }
 }
 

@@ -57,7 +57,7 @@
                             <th>Capacity</th>
                             <th>Status</th>
                             <th>Insurance expiry</th>
-                            <th style="text-align: right;">Coverage</th>
+                            <th style="text-align:right;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -67,12 +67,12 @@
             </div>
         </section>
 
-        <!-- Add Vehicle Dialog -->
+        <!-- Add / Edit Vehicle Dialog -->
         <dialog id="add-vehicle-dialog" class="user-dialog">
             <div class="user-dialog-header">
                 <div>
-                    <p class="eyebrow">FLEET REGISTRATION</p>
-                    <h2>Add new vehicle</h2>
+                    <p class="eyebrow" id="vehicle-dialog-eyebrow">FLEET REGISTRATION</p>
+                    <h2 id="vehicle-dialog-title">Add new vehicle</h2>
                 </div>
                 <button type="button" id="close-vehicle-dialog" class="icon-button" aria-label="Close dialog">×</button>
             </div>
@@ -103,10 +103,12 @@
                         <input type="number" id="v-capacity" name="capacity" min="1" max="100" value="15" required>
                     </div>
                     <div class="form-field">
-                        <label for="v-status">Initial status</label>
+                        <label for="v-status">Status</label>
                         <select id="v-status" name="status">
                             <option value="available">Available</option>
+                            <option value="on_trip">On Trip</option>
                             <option value="maintenance">Maintenance</option>
+                            <option value="decommissioned">Decommissioned</option>
                         </select>
                     </div>
                     <div class="form-field">
@@ -121,7 +123,7 @@
                 <p id="vehicle-form-message" class="form-message" role="status" aria-live="polite"></p>
                 <div class="user-dialog-actions">
                     <button type="button" class="button button-secondary" onclick="document.querySelector('#add-vehicle-dialog').close()">Cancel</button>
-                    <button type="submit" class="button">Register vehicle</button>
+                    <button type="submit" id="vehicle-submit-btn" class="button">Register vehicle</button>
                 </div>
             </form>
         </dialog>

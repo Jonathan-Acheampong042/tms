@@ -274,9 +274,36 @@ const createInvoiceClose = document.querySelector('#create-invoice-close');
 const createInvoiceCancel = document.querySelector('#create-invoice-cancel');
 const createInvoiceSubmit = document.querySelector('#create-invoice-submit');
 const invoiceAlert = document.querySelector('#invoice-alert');
+const invBookingSelect = document.querySelector('#inv-booking-id');
+
+async function populateInvoiceBookingSelect() {
+  if (!invBookingSelect) return;
+  invBookingSelect.innerHTML = '<option value="">Loading bookings…</option>';
+  try {
+    const [bookings, invoicesRes] = await Promise.all([
+      apiFetch('/bookings').catch(() => []),
+      apiFetch('/billing/invoices?pageSize=100').catch(() => ({ items: [] })),
+    ]);
+    const billedBookingIds = new Set((invoicesRes.items || []).map((i) => i.booking_id));
+    const allBookings = Array.isArray(bookings) ? bookings : [];
+    invBookingSelect.innerHTML = '<option value="">General billing (auto-linked to service)</option>';
+    for (const b of allBookings) {
+      const isBilled = billedBookingIds.has(b.id);
+      const opt = document.createElement('option');
+      opt.value = b.id;
+      const type = b.booking_type === 'cargo' ? `Cargo ${b.weight ? b.weight + 'kg' : ''}` : 'Passenger';
+      const statusNote = isBilled ? ' (Already invoiced)' : '';
+      opt.textContent = `Booking: ${b.pickup} → ${b.dropoff} [${type}]${statusNote}`;
+      if (isBilled) opt.disabled = true;
+      invBookingSelect.append(opt);
+    }
+  } catch (err) {
+    invBookingSelect.innerHTML = '<option value="">General billing (auto-linked to service)</option>';
+  }
+}
 
 if (openInvoiceModalBtn && createInvoiceModal) {
-  openInvoiceModalBtn.addEventListener('click', () => {
+  openInvoiceModalBtn.addEventListener('click', async () => {
     createInvoiceForm.reset();
     const today = new Date();
     const in30Days = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000);
@@ -284,6 +311,7 @@ if (openInvoiceModalBtn && createInvoiceModal) {
     if (dueDateInput) dueDateInput.value = in30Days.toISOString().slice(0, 10);
     if (invoiceAlert) invoiceAlert.hidden = true;
     createInvoiceSubmit.disabled = false;
+    await populateInvoiceBookingSelect();
     createInvoiceModal.showModal();
   });
 }
@@ -306,8 +334,12 @@ if (createInvoiceForm) {
     createInvoiceSubmit.disabled = true;
 
     const formData = new FormData(createInvoiceForm);
+    const booking_id = formData.get('booking_id') || null;
+    const userInv = formData.get('invoice_number')?.trim();
+    const autoInv = `INV-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
     const body = {
-      invoice_number: formData.get('invoice_number')?.trim() || null,
+      booking_id,
+      invoice_number: userInv || autoInv,
       amount: Number(formData.get('amount')),
       due_date: formData.get('due_date'),
       status: formData.get('status') || 'unpaid',

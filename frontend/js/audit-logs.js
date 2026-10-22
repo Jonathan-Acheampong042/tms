@@ -60,7 +60,6 @@ function renderAuditLogs(logs) {
   for (const log of logs) {
     const tableName = (log.table_name || 'record').replaceAll('_', ' ');
     const actor = log.username ? `<strong>${escapeHtml(log.username)}</strong>` : '<span style="color: var(--ink-faint);">System Automated</span>';
-    const shortRecordId = log.record_id ? `${String(log.record_id).slice(0, 8)}…` : '—';
 
     const tr = document.createElement('tr');
     tr.innerHTML = `
@@ -68,14 +67,61 @@ function renderAuditLogs(logs) {
       <td>${getActionBadge(log.action)}</td>
       <td style="text-transform: capitalize;"><strong>${escapeHtml(tableName)}</strong></td>
       <td>${actor}</td>
-      <td><code>${escapeHtml(shortRecordId)}</code></td>
+      <td style="text-align: right;">
+        <button type="button" class="button button-secondary button-sm" data-audit-id="${log.id}">Details</button>
+      </td>
     `;
+
+    const btn = tr.querySelector(`[data-audit-id="${log.id}"]`);
+    if (btn) {
+      btn.addEventListener('click', () => openAuditDetails(log));
+    }
+
     auditTableBody.append(tr);
   }
 
   if (auditCountEl) {
     auditCountEl.textContent = `${logs.length} ${logs.length === 1 ? 'audit record' : 'audit records'} retrieved`;
   }
+}
+
+function openAuditDetails(log) {
+  const modal = document.querySelector('#audit-detail-dialog');
+  if (!modal) return;
+
+  const badgeEl = document.querySelector('#audit-detail-badge');
+  if (badgeEl) badgeEl.innerHTML = getActionBadge(log.action);
+  const tableEl = document.querySelector('#audit-detail-table');
+  if (tableEl) tableEl.textContent = (log.table_name || 'record').replaceAll('_', ' ');
+  const timeEl = document.querySelector('#audit-detail-time');
+  if (timeEl) timeEl.textContent = formatDateTime(log.created_at);
+  const actorEl = document.querySelector('#audit-detail-actor');
+  if (actorEl) {
+    const name = [log.first_name, log.last_name].filter(Boolean).join(' ');
+    actorEl.textContent = log.username ? `${log.username} ${name ? '(' + name + ')' : ''} [${log.role || 'user'}]` : 'System automated trigger';
+  }
+
+  let contextStr = '';
+  if (log.plate_number) contextStr = `Vehicle plate: ${log.plate_number}`;
+  else if (log.driver_first_name || log.driver_last_name) contextStr = `Driver: ${[log.driver_first_name, log.driver_last_name].filter(Boolean).join(' ')}`;
+  else if (log.route_name) contextStr = `Route: ${log.route_name}`;
+  else if (log.invoice_number) contextStr = `Invoice: ${log.invoice_number}`;
+
+  const ctxWrap = document.querySelector('#audit-detail-context-wrapper');
+  const ctxEl = document.querySelector('#audit-detail-context');
+  if (ctxWrap && ctxEl) {
+    if (contextStr) {
+      ctxWrap.hidden = false;
+      ctxEl.textContent = contextStr;
+    } else {
+      ctxWrap.hidden = true;
+    }
+  }
+
+  const recEl = document.querySelector('#audit-detail-recid');
+  if (recEl) recEl.textContent = log.record_id || '—';
+
+  modal.showModal();
 }
 
 function filterAuditLogs() {

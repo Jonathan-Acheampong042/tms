@@ -1,10 +1,11 @@
 /**
  * TMS – incidents.js
- * Driver safety incidents, severity classification, and incident logging.
+ * Driver safety incidents, severity classification, logging, viewing, and editing.
  */
 
 let allIncidents = [];
 let availableDrivers = [];
+let editingIncidentId = null;
 
 const incidentTableBody = document.querySelector('#incidents-table tbody');
 const incidentCountEl = document.querySelector('#incidents-count');
@@ -15,11 +16,21 @@ const incidentDialog = document.querySelector('#incident-dialog');
 const incidentForm = document.querySelector('#incident-form');
 const driverSelectEl = document.querySelector('#inc-driver');
 const formMessage = document.querySelector('#incident-form-message');
+const incidentDialogEyebrow = document.querySelector('#incident-dialog-eyebrow');
+const incidentDialogTitle = document.querySelector('#incident-dialog-title');
+const incidentSubmitBtn = document.querySelector('#incident-submit-btn');
 
 function formatDate(val) {
   if (!val) return '—';
   const d = new Date(val);
   return Number.isNaN(d.getTime()) ? String(val) : d.toLocaleDateString();
+}
+
+function formatDateForInput(val) {
+  if (!val) return '';
+  const d = new Date(val);
+  if (Number.isNaN(d.getTime())) return '';
+  return d.toISOString().slice(0, 10);
 }
 
 function getSeverityBadge(sev) {
@@ -40,6 +51,68 @@ function escapeHtml(str) {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
+}
+
+async function openIncidentEditDialog(inc) {
+  if (!incidentDialog || !incidentForm) return;
+  editingIncidentId = inc ? inc.id : null;
+  if (formMessage) formMessage.textContent = '';
+  await populateDriverSelect();
+
+  if (inc) {
+    if (incidentDialogEyebrow) incidentDialogEyebrow.textContent = 'SAFETY INCIDENT MANAGEMENT';
+    if (incidentDialogTitle) incidentDialogTitle.textContent = 'Edit incident report';
+    if (incidentSubmitBtn) incidentSubmitBtn.textContent = 'Save changes';
+
+    if (driverSelectEl) driverSelectEl.value = inc.driver_id || '';
+    const sevSelect = incidentForm.querySelector('#inc-severity');
+    if (sevSelect) sevSelect.value = inc.severity || 'low';
+    const dateInput = incidentForm.querySelector('#inc-date');
+    if (dateInput) dateInput.value = formatDateForInput(inc.incident_date);
+    const descInput = incidentForm.querySelector('#inc-desc');
+    if (descInput) descInput.value = inc.description || '';
+  } else {
+    if (incidentDialogEyebrow) incidentDialogEyebrow.textContent = 'SAFETY LOGGING';
+    if (incidentDialogTitle) incidentDialogTitle.textContent = 'Log driver incident';
+    if (incidentSubmitBtn) incidentSubmitBtn.textContent = 'Submit incident report';
+
+    incidentForm.reset();
+    const today = new Date().toISOString().split('T')[0];
+    const dateInput = incidentForm.querySelector('#inc-date');
+    if (dateInput) dateInput.value = today;
+  }
+
+  incidentDialog.showModal();
+}
+
+function openIncidentDetails(inc) {
+  const modal = document.querySelector('#view-incident-dialog');
+  if (!modal) return;
+  const driverName = inc.first_name || inc.last_name
+    ? `${inc.first_name || ''} ${inc.last_name || ''}`.trim()
+    : 'Unassigned driver';
+  const licenceNumber = inc.license_number ? ` (${inc.license_number})` : '';
+
+  const sevEl = document.querySelector('#view-inc-severity');
+  if (sevEl) sevEl.innerHTML = getSeverityBadge(inc.severity);
+  const dateEl = document.querySelector('#view-inc-date');
+  if (dateEl) dateEl.textContent = formatDate(inc.incident_date);
+  const drvEl = document.querySelector('#view-inc-driver');
+  if (drvEl) drvEl.textContent = `${driverName}${licenceNumber}`;
+  const descEl = document.querySelector('#view-inc-desc');
+  if (descEl) descEl.textContent = inc.description || 'No description recorded.';
+  
+  const tripWrapper = document.querySelector('#view-inc-trip-wrapper');
+  const tripEl = document.querySelector('#view-inc-trip');
+  if (tripWrapper && tripEl) {
+    if (inc.trip_id) {
+      tripWrapper.hidden = false;
+      tripEl.textContent = inc.trip_id;
+    } else {
+      tripWrapper.hidden = true;
+    }
+  }
+  modal.showModal();
 }
 
 function renderIncidents(incidents) {
@@ -71,8 +144,23 @@ function renderIncidents(incidents) {
       </td>
       <td>${getSeverityBadge(inc.severity)}</td>
       <td style="color: var(--ink);">${escapeHtml(inc.description || '—')}</td>
-      <td><code>${inc.trip_id ? String(inc.trip_id).slice(0, 8) + '…' : '—'}</code></td>
+      <td style="text-align: right;">
+        <div class="table-actions">
+          <button type="button" class="button button-secondary button-sm" data-incident-view="${inc.id}">View</button>
+          <button type="button" class="button button-sm" data-incident-edit="${inc.id}">Edit</button>
+        </div>
+      </td>
     `;
+
+    const viewBtn = tr.querySelector(`[data-incident-view="${inc.id}"]`);
+    if (viewBtn) {
+      viewBtn.addEventListener('click', () => openIncidentDetails(inc));
+    }
+    const editBtn = tr.querySelector(`[data-incident-edit="${inc.id}"]`);
+    if (editBtn) {
+      editBtn.addEventListener('click', () => openIncidentEditDialog(inc));
+    }
+
     incidentTableBody.append(tr);
   }
 
@@ -135,17 +223,7 @@ if (incidentSearchInput) incidentSearchInput.addEventListener('input', filterInc
 if (incidentSeverityFilter) incidentSeverityFilter.addEventListener('change', filterIncidents);
 
 if (reportIncidentBtn && incidentDialog) {
-  reportIncidentBtn.addEventListener('click', () => {
-    if (formMessage) formMessage.textContent = '';
-    if (incidentForm) {
-      incidentForm.reset();
-      const today = new Date().toISOString().split('T')[0];
-      const dateInput = incidentForm.querySelector('#inc-date');
-      if (dateInput) dateInput.value = today;
-    }
-    populateDriverSelect();
-    incidentDialog.showModal();
-  });
+  reportIncidentBtn.addEventListener('click', () => openIncidentEditDialog(null));
 }
 
 if (incidentForm && incidentDialog) {
@@ -153,7 +231,7 @@ if (incidentForm && incidentDialog) {
     e.preventDefault();
     if (formMessage) {
       formMessage.dataset.state = '';
-      formMessage.textContent = 'Submitting incident report…';
+      formMessage.textContent = 'Saving incident report…';
     }
 
     const formData = new FormData(incidentForm);
@@ -165,30 +243,36 @@ if (incidentForm && incidentDialog) {
     };
 
     try {
-      await apiFetch('/incidents', {
-        method: 'POST',
-        body,
-      });
-      if (formMessage) {
-        formMessage.dataset.state = 'success';
-        formMessage.textContent = 'Incident report logged successfully!';
+      if (editingIncidentId) {
+        await apiFetch(`/incidents/${editingIncidentId}`, {
+          method: 'PATCH',
+          body,
+        });
+        if (window.showToast) {
+          window.showToast.success('Driver safety incident report updated successfully!', 'Incident Saved');
+        }
+      } else {
+        await apiFetch('/incidents', {
+          method: 'POST',
+          body,
+        });
+        if (window.showToast) {
+          window.showToast.success('Driver safety incident report logged successfully!', 'Incident Recorded');
+        }
       }
+
       incidentDialog.close();
       await loadIncidents();
-      if (window.showToast) {
-        window.showToast.success('Driver safety incident report logged successfully!', 'Incident Recorded');
-      }
     } catch (err) {
       if (formMessage) {
         formMessage.dataset.state = 'error';
-        formMessage.textContent = err.message || 'Could not log incident.';
+        formMessage.textContent = err.message || 'Could not save incident.';
       }
       if (window.showToast) {
-        window.showToast.error(err.message || 'Could not log incident.', 'Submission Failed');
+        window.showToast.error(err.message || 'Could not save incident.', 'Submission Failed');
       }
     }
   });
 }
 
 loadIncidents();
-

@@ -72,4 +72,49 @@ router.post('/', async (req, res) => {
   }
 });
 
+router.patch('/:id', updateIncident);
+router.put('/:id', updateIncident);
+
+async function updateIncident(req, res) {
+  try {
+    const { driver_id, description, incident_date, severity } = req.body;
+    const fields = [];
+    const values = [req.params.id];
+    let idx = 2;
+
+    if (driver_id) {
+      fields.push(`driver_id = $${idx++}::uuid`);
+      values.push(driver_id);
+    }
+    if (description !== undefined) {
+      fields.push(`description = $${idx++}`);
+      values.push(description.trim());
+    }
+    if (incident_date) {
+      fields.push(`incident_date = $${idx++}::date`);
+      values.push(incident_date);
+    }
+    if (severity) {
+      fields.push(`severity = $${idx++}`);
+      values.push(severity);
+    }
+
+    if (fields.length === 0) {
+      return res.status(400).json({ message: 'No editable fields were provided.' });
+    }
+
+    const { rows } = await db.query(`
+      UPDATE operations.driver_incidents
+      SET ${fields.join(', ')}
+      WHERE id = $1::uuid
+      RETURNING *
+    `, values);
+
+    if (!rows[0]) return res.status(404).json({ message: 'Incident not found.' });
+    return res.json(rows[0]);
+  } catch (error) {
+    return handleDbError(error, res);
+  }
+}
+
 module.exports = router;

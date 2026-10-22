@@ -58,10 +58,11 @@
                             <th>Scheduled start</th>
                             <th>Scheduled end</th>
                             <th>Status</th>
+                            <th style="text-align: right;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td colspan="6" class="workspace-empty">Loading trip records…</td></tr>
+                        <tr><td colspan="7" class="workspace-empty">Loading trip records…</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -107,13 +108,6 @@
                     <div class="form-field">
                         <label for="trip-end">Scheduled arrival</label>
                         <input id="trip-end" name="scheduled_end" type="datetime-local" required>
-                    </div>
-                    <div class="form-field form-field-full">
-                        <label for="trip-status">Initial status</label>
-                        <select id="trip-status" name="status">
-                            <option value="scheduled">Scheduled</option>
-                            <option value="in_progress">In Progress</option>
-                        </select>
                     </div>
                 </div>
                 <div id="trip-alert" class="alert alert-error" hidden style="margin-top: 14px;"></div>

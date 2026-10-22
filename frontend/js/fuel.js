@@ -67,7 +67,9 @@ function renderFuel(records) {
       <td><strong>${litres.toFixed(1)} L</strong></td>
       <td><strong>${ghanaCedi.format(cost)}</strong></td>
       <td>${escapeHtml(f.station || 'Station')}</td>
-      <td>${formatDate(f.created_at)}</td>
+      <td style="text-align: right;">
+        <span style="color: var(--ink-soft); font-size: 0.8125rem;">${formatDate(f.created_at)}</span>
+      </td>
     `;
     fuelTableBody.append(tr);
   }

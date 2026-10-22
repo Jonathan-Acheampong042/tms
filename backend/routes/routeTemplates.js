@@ -3,7 +3,7 @@ const apiTable = require('../utils/apiTable');
 const handleDbError = require('../utils/dbError');
 
 const router = express.Router();
-
+const RESOURCE = 'operations.routes';
 
 router.get('/', async (req, res) => {
   try {
